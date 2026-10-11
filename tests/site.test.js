@@ -133,6 +133,7 @@ test('the two language versions point at each other and have the same controls',
 });
 
 test('structured data: valid, honest, and the FAQ is exactly the visible FAQ', () => {
+  const faqCounts = [];
   for (const [lang, file] of Object.entries(PAGES)) {
     const h = read(file), blocks = ldBlocks(h);
     const app = blocks.find(b => b['@type'] === 'WebApplication'), faq = blocks.find(b => b['@type'] === 'FAQPage');
@@ -143,9 +144,11 @@ test('structured data: valid, honest, and the FAQ is exactly the visible FAQ', (
     assert.ok(!('aggregateRating' in app) && !('review' in app), 'no invented ratings or reviews');
     const visible = [...h.matchAll(/<details class="q"><summary>(.*?)<\/summary><div class="a"><p>(.*?)<\/p><\/div><\/details>/gs)].map(m => [flat(m[1]), flat(m[2])]);
     assert.ok(visible.length >= 9, `${file}: ${visible.length} visible questions`);
+    faqCounts.push(visible.length);
     assert.deepStrictEqual(faq.mainEntity.map(q => [q.name, q.acceptedAnswer.text]), visible, `${file}: FAQ structured data differs from the visible FAQ`);
     assert.strictEqual(faq.inLanguage, lang);
   }
+  assert.strictEqual(faqCounts[0], faqCounts[1], `the Persian and English pages must answer the same questions (${faqCounts.join(' vs ')})`);
 });
 
 test('the example table and the accuracy figures on the page are true', () => {

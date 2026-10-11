@@ -16,7 +16,7 @@ What people in Persian actually call it: **فینگلیش، پینگلیش، پ�
 ## What is in place
 
 * **Two pages, one tool.** `/` is Persian (`lang="fa" dir="rtl"`, the default), `/en/` is English; each has its own title, description, one H1, headings, text, FAQ and examples, and they link to each other (a visible language switch, plus `hreflang` once the address is known).
-* **Content that answers the questions people (and assistants) ask:** a definition, a three-step "how it works", a table of examples that a test checks against the engine, ten FAQ entries, About and data credits.
+* **Content that answers the questions people (and assistants) ask:** a definition, a three-step "how it works", a table of examples that a test checks against the engine, eleven FAQ entries (the same ones in Persian and English; a test keeps the two lists the same length), About and data credits.
 * **Head:** title and description (length-checked), `robots` with `max-snippet:-1, max-image-preview:large`, Open Graph and Twitter card tags, icons (`favicon.ico`, SVG, `apple-touch-icon.png`), `theme-color`.
 * **Structured data (JSON-LD):** `WebApplication` (free, `UtilitiesApplication`, features, licence, author) and `FAQPage` on both pages; `WebSite` + `WebPage` once the address is known. The FAQ markup is generated from the visible FAQ, so they cannot differ.
 * **Speed:** scripts are `defer`red, so the text paints before the 11 MB of word lists arrive; the logo has fixed dimensions; fonts use `font-display: swap`.

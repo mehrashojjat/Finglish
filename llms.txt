@@ -49,7 +49,7 @@ On an independent test set of chat-style words, the first suggestion was right a
 Yes. The program is open source and released under the GNU AGPL-3.0. The full source (website, conversion engine and Mac keyboard) is on GitHub.
 
 ### Is this an alternative to Google Input Tools?
-Finglish is an independent project and is not affiliated with Google. Like online transliteration tools such as Google Input Tools, it turns Latin letters typed phonetically into Persian script, but it runs entirely in your browser (or in the Mac keyboard), so nothing you type is sent to a server.
+Finglish is an independent project and is not affiliated with Google. It does the same job as Google Input Tools: it turns Latin letters typed phonetically into Persian script. The difference is where the work happens. Online tools such as Google Input Tools get their suggestions from a server, which means what you type travels over the internet; Finglish converts on your own device, in your browser or in the Mac keyboard, so nothing you type is sent anywhere, and it works offline once the page has loaded.
 
 ## Licence
 The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only); its source code is at https://github.com/mehrashojjat/Finglish. The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.
