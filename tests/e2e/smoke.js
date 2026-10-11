@@ -258,11 +258,12 @@ const ok = (cond, msg, extra) => { console.log((cond ? 'PASS ' : 'FAIL ') + msg 
   const about = await page.evaluate(() => {
     const a = document.getElementById('about'); if (!a) return null;
     const link = t => { const x = Array.from(a.querySelectorAll('a')).find(e => e.textContent.includes(t)); return x ? x.href : null; };
-    return { rtl: a.dir === 'rtl', text: a.textContent, dev: link('مهراس حجت'), subs: link('OpenSubtitles'), wiki: link('ویکی‌پدیا'), wikt: link('Wiktionary'), cc: link('CC BY-SA'), font: link('Vazirmatn'),
+    return { rtl: a.dir === 'rtl', text: a.textContent, dev: link('مهراس حجت'), src: link('GitHub'), subs: link('OpenSubtitles'), wiki: link('ویکی‌پدیا'), wikt: link('Wiktionary'), cc: link('CC BY-SA'), font: link('Vazirmatn'),
              icon: !!a.querySelector('img.about-icon') && a.querySelector('img.about-icon').naturalWidth > 0 };
   });
   ok(about && about.rtl && about.icon && about.text.includes('سازنده') && about.text.includes('اینترنت لازم نیست') && about.text.includes('روی سیستم شما اجرا می‌شود'), 'About: icon, the app text (local, no internet) and «سازنده»', about && about.text.slice(0, 80));
   ok(about && about.dev === 'https://mehrashojjat.com/', 'About: the developer name links to mehrashojjat.com', about && about.dev);
+  ok(about && about.src === 'https://github.com/mehrashojjat/Finglish', 'About: the open-source note links to the source code on GitHub', about && about.src);
   ok(about && about.subs && about.wiki && about.wikt && /creativecommons\.org\/licenses\/by-sa/.test(about.cc || '') && about.font, 'About: the data sources, the CC BY-SA licence and the font are credited with links', about);
 
 

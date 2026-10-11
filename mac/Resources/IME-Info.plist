@@ -37,7 +37,7 @@
 	<key>InputMethodServerDelegateClass</key><string>FinglishInputController</string>
 	<key>LSMinimumSystemVersion</key><string>26.0</string>
 	<key>LSUIElement</key><string>1</string>
-	<key>NSHumanReadableCopyright</key><string>© 2026 Mehras Hojjat. GNU AGPL-3.0.</string>
+	<key>NSHumanReadableCopyright</key><string>© 2026 Mehras Hojjat. GNU AGPL-3.0. Source code: https://github.com/mehrashojjat/Finglish</string>
 	<key>NSPrincipalClass</key><string>NSApplication</string>
 	<key>NSSupportsSuddenTermination</key><true/>
 	<key>TISIconIsTemplate</key><true/>

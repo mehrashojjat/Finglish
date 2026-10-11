@@ -8,7 +8,7 @@
 	<key>CFBundleIdentifier</key><string>com.finglish.FinglishSettings</string>
 	<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
 	<key>CFBundleName</key><string>Finglish Settings</string>
-	<key>NSHumanReadableCopyright</key><string>© 2026 Mehras Hojjat. GNU AGPL-3.0.</string>
+	<key>NSHumanReadableCopyright</key><string>© 2026 Mehras Hojjat. GNU AGPL-3.0. Source code: https://github.com/mehrashojjat/Finglish</string>
 	<key>CFBundleDisplayName</key><string>Finglish Settings</string>
 	<key>CFBundlePackageType</key><string>APPL</string>
 	<key>CFBundleShortVersionString</key><string>@VERSION@</string>

@@ -134,6 +134,16 @@ struct SettingsView: View {
                             Text("سازنده:")
                             Link("مهراس حجت", destination: AboutInfo.website)
                         }.padding(.top, 2)
+                        HStack(spacing: 4) {
+                            Text("وب‌سایت:")
+                            Link(GuideText.name(AboutInfo.siteName), destination: AboutInfo.site)
+                        }
+                        HStack(spacing: 4) {
+                            Text("کد برنامه (متن‌باز):")
+                            Link("گیت‌هاب", destination: AboutInfo.source)
+                        }
+                        Text(GuideText.fa(AboutInfo.dataCredit)).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true).padding(.top, 6)
+                        Link("داده‌ها و منابع", destination: AboutInfo.credits).font(.caption)
                     }
                 }
             }

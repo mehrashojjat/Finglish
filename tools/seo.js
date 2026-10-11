@@ -119,12 +119,13 @@ Key facts:
 ${link('Finglish — Persian page', PAGES[0].url, 'the tool and its explanation in Persian (فارسی)')}
 ${link('Finglish — English page', PAGES[1].url, 'the same tool, explained in English')}
 ${link('macOS keyboard (DMG)', base + 'downloads/Finglish.dmg', 'the Finglish keyboard for macOS 26+, signed and notarized')}
+- [Source code (GitHub)](https://github.com/mehrashojjat/Finglish): the full source of the website, the engine and the Mac keyboard, AGPL-3.0-only
 ${base ? '' : '(Absolute links are added once the site address is known: node tools/seo.js <address>.)\n'}
 ## Frequently asked questions
 ${faq.map(q => `### ${q.name}\n${q.acceptedAnswer.text}`).join('\n\n')}
 
 ## Licence
-The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only). The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.
+The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only); its source code is at https://github.com/mehrashojjat/Finglish. The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.
 `);
 
 // ---- write (or compare)

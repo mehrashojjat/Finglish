@@ -74,6 +74,19 @@ test('the footer carries the copyright and the licence, on the website and in th
   assert.ok(!/قلم/.test(html.replace(/<script[\s\S]*?<\/script>/g, '')), 'the word for a typeface is «فونت», not «قلم»');
 });
 
+test('the website and the Mac app link to the source code (AGPL) and the Mac app links to the website', () => {
+  const GH = 'https://github.com/mehrashojjat/Finglish', SITE = 'https://finglish.mehrashojjat.com';
+  for (const file of Object.values(PAGES)) assert.ok(read(file).includes(`href="${GH}"`), `${file} links to the source code on GitHub`);
+  const pkg = JSON.parse(read('package.json'));
+  assert.ok(/mehrashojjat\/Finglish/.test(pkg.repository.url) && /mehrashojjat\/Finglish\/issues/.test(pkg.bugs.url), 'package.json names the repository');
+  assert.strictEqual(pkg.homepage, SITE + '/');
+  const about = read('mac/Sources/Settings/AboutInfo.swift'), view = read('mac/Sources/Settings/SettingsView.swift');
+  assert.ok(about.includes(`"${GH}"`) && about.includes(`"${SITE}"`), 'the Mac app knows the source address and the website address');
+  assert.ok(/Link\([^\n]*AboutInfo\.source\)/.test(view) && /Link\([^\n]*AboutInfo\.site\)/.test(view), 'the Mac settings window links to both');
+  for (const f of ['mac/Resources/Settings-Info.plist', 'mac/Resources/IME-Info.plist']) assert.ok(read(f).includes(GH), `${f}: the copyright line names the source`);
+  assert.ok(/CC BY-SA 4\.0/.test(about) && /AboutInfo\.dataCredit/.test(view), 'the Mac app credits the CC BY-SA data its word lists are built from');
+});
+
 test('the old reverse-engineering work is gone', () => {
   for (const d of ['reference', 'research', 'Screenshots']) assert.ok(!fs.existsSync(path.join(ROOT, d)), d + '/ must not exist');
   assert.ok(!fs.existsSync(path.join(ROOT, 'docs/REVERSE_ENGINEERING.md')));

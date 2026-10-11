@@ -12,10 +12,10 @@ Key facts:
 - Not a machine-translation tool: it transliterates (changes the script), it does not translate English into Persian.
 
 ## Pages
-- Finglish — Persian page: the tool and its explanation in Persian (فارسی)
-- Finglish — English page: the same tool, explained in English
-- macOS keyboard (DMG): the Finglish keyboard for macOS 26+, signed and notarized
-(Absolute links are added once the site address is known: node tools/seo.js <address>.)
+- [Finglish — Persian page](https://finglish.mehrashojjat.com/): the tool and its explanation in Persian (فارسی)
+- [Finglish — English page](https://finglish.mehrashojjat.com/en/): the same tool, explained in English
+- [macOS keyboard (DMG)](https://finglish.mehrashojjat.com/downloads/Finglish.dmg): the Finglish keyboard for macOS 26+, signed and notarized
+- [Source code (GitHub)](https://github.com/mehrashojjat/Finglish): the full source of the website, the engine and the Mac keyboard, AGPL-3.0-only
 
 ## Frequently asked questions
 ### What are Finglish and Pinglish?
@@ -46,10 +46,10 @@ There is a Finglish keyboard for Mac that works in every app: use the Download b
 On an independent test set of chat-style words, the first suggestion was right about 92% of the time, and the right word was among the first five suggestions more than 98% of the time. Your results may differ a little.
 
 ### Is it open source?
-Yes. The program is open source and released under the GNU AGPL-3.0.
+Yes. The program is open source and released under the GNU AGPL-3.0. The full source (website, conversion engine and Mac keyboard) is on GitHub.
 
 ### Is this an alternative to Google Input Tools?
 Finglish is an independent project and is not affiliated with Google. Like online transliteration tools such as Google Input Tools, it turns Latin letters typed phonetically into Persian script, but it runs entirely in your browser (or in the Mac keyboard), so nothing you type is sent to a server.
 
 ## Licence
-The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only). The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.
+The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only); its source code is at https://github.com/mehrashojjat/Finglish. The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.

@@ -6,7 +6,9 @@
  * Rule 2  the website (index.html + assets/) has NO network API anywhere (fetch, XHR, WebSocket, EventSource, sendBeacon, importScripts):
  *         it is a purely local page, so nothing may use one.
  * Rule 3  nothing external is *loaded* by the page: no src/href/@import/url() pointing at http(s):// or //. (Plain links <a href> the user
- *         clicks — the developer's site, the data sources, the download file — are not loading anything and are listed separately.)
+ *         clicks — the developer's site, the data sources, the download file — are not loading anything and are listed separately.
+ *         Neither are <link rel="canonical|alternate"> — hints for search engines that a browser never fetches — nor the <base> of 404.html
+ *         when it is the site's own address, package.json's "homepage": that is the site itself, not another origin.)
  * Rule 4  the page's own scripts contain no web address at all, so nothing could be requested even indirectly.
  */
 const fs = require('fs');
@@ -34,10 +36,12 @@ ok(!NET.test(strip(vendor)), 'assets/vendor/farsi-ime-engine.js (the engine as s
 
 // Rule 3
 const loaded = [], links = [];
+const HOME = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).homepage || null;
+const notLoaded = (name, attrs, url) => name === 'a' || (name === 'link' && /\brel\s*=\s*["'](?:canonical|alternate)["']/i.test(attrs)) || (name === 'base' && !!HOME && url === HOME);
 for (const f of siteFiles.filter(f => /\.(html|css)$/.test(f))) {
   const t = fs.readFileSync(f, 'utf8');
   for (const tag of t.matchAll(/<(\w+)\b([^>]*)>/g)) {
-    for (const m of tag[2].matchAll(/\b(?:src|href|data|poster|srcset)\s*=\s*["']\s*((?:https?:)?\/\/[^"']+)["']/gi)) (tag[1].toLowerCase() === 'a' ? links : loaded).push([rel(f), tag[1], m[1]]);
+    for (const m of tag[2].matchAll(/\b(?:src|href|data|poster|srcset)\s*=\s*["']\s*((?:https?:)?\/\/[^"']+)["']/gi)) (notLoaded(tag[1].toLowerCase(), tag[2], m[1]) ? links : loaded).push([rel(f), tag[1], m[1]]);
   }
   for (const m of t.matchAll(/(?:@import\s+(?:url\()?|url\()\s*["']?\s*((?:https?:)?\/\/[^"')\s]+)/gi)) loaded.push([rel(f), 'css', m[1]]);
 }

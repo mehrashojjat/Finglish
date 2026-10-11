@@ -3,6 +3,8 @@
 **Type Persian with English letters — a free Finglish / Pinglish to Persian converter and keyboard.** Write `salam khoobi`, get سلام خوبی — pick from a list of candidates and keep going.
 A website to try it, and a macOS keyboard to use it in every app. Both run the same offline engine: nothing you type ever leaves your computer.
 
+**Website: [finglish.mehrashojjat.com](https://finglish.mehrashojjat.com)** · **Source: [github.com/mehrashojjat/Finglish](https://github.com/mehrashojjat/Finglish)** · by [Mehras Hojjat](https://mehrashojjat.com)
+
 ![The website: typing «mikham» shows Persian candidates under the cursor](docs/screenshots/app_popup.png)
 
 * **Offline and private.** No server, no account, no tracking. The page and the keyboard contain no network code at all — checked by tests (see [Privacy](#privacy-offline-and-proven)).
@@ -15,7 +17,7 @@ A website to try it, and a macOS keyboard to use it in every app. Both run the s
 
 | | |
 |---|---|
-| **macOS** 26 or newer, Apple silicon and Intel (4.8 MB, signed and notarized by Apple) | [`downloads/Finglish.dmg`](downloads/Finglish.dmg) — or the **دانلود** button on the website |
+| **macOS** 26 or newer, Apple silicon and Intel (4.8 MB, signed and notarized by Apple) | [`downloads/Finglish.dmg`](downloads/Finglish.dmg) — or the **دانلود** button on [the website](https://finglish.mehrashojjat.com) |
 | **Windows** | coming soon |
 
 Open the image, drag **Finglish Settings** onto **Applications**, open it. The first launch installs the keyboard and shows a four-step guide for the one thing macOS makes you do yourself: add the keyboard under *System Settings → Keyboard → Text Input → Input Sources*.
@@ -99,8 +101,8 @@ Rebuilding the word list from the raw corpora: [`docs/DATA_SOURCES.md`](docs/DAT
 
 ## Publishing the website
 
-Publish the repository root with any static host (GitHub Pages: *Settings → Pages → Deploy from a branch → `main` / `(root)`*; the empty `.nojekyll` file keeps Pages from processing the files).
-After publishing, run `npm run seo -- <the address>` once (canonical and hreflang links, sitemap, structured-data URLs need it) and follow the checklist in [`docs/SEO.md`](docs/SEO.md).
+Publish the repository root with any static host. The live site, **https://finglish.mehrashojjat.com**, is served by Cloudflare Pages straight from this repository's `main` branch: framework preset *None*, no build command, build output directory left empty (the repository root). Nothing is built on deploy, because the bundled engine and word lists are committed. (GitHub Pages works too: *Settings → Pages → Deploy from a branch → `main` / `(root)`*; the empty `.nojekyll` file keeps it from processing the files.)
+The address-dependent files (canonical and hreflang links, sitemap, structured-data URLs) were written with `npm run seo -- https://finglish.mehrashojjat.com/`; for a different address run it again, and follow the checklist in [`docs/SEO.md`](docs/SEO.md).
 Every link on the page is relative, so it works at `/` and under a project path such as `/finglish/`. The download button links to `downloads/Finglish.dmg` with the HTML `download` attribute, so the browser saves the file instead of opening another page.
 To ship a new Mac version: bump `VERSION` in `mac/build.sh` and `version` in `package.json`, run `npm run mac:release`, run `npm test`, commit the new `downloads/Finglish.dmg`.
 
@@ -112,6 +114,7 @@ The download is the one deliberate exception: the file is requested only when yo
 ## Licence
 
 * **Program code** — [GNU Affero General Public License v3.0 only](LICENSE) (`AGPL-3.0-only`), © 2026 Mehras Hojjat. You may use, study, modify and share it, and sell it too, as long as you release your version — including the source of a modified version offered as a network service — under the same licence.
+  The complete source of the website, the engine and the Mac keyboard is this repository, [github.com/mehrashojjat/Finglish](https://github.com/mehrashojjat/Finglish); the website and the Mac app both link to it, and the disk image on the website is built from it (`mac/make_dmg.sh`).
   If you want to use it in a product you do not want to release under the AGPL, that needs a separate agreement with the author: [mehrashojjat.com](https://mehrashojjat.com).
 * **Word lists** (`data/build/`, their copies in `engine/dist/` and `assets/data/`) — derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts, so they stay under **CC BY-SA 4.0** with credit to those sources ([`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)).
 * **Vazirmatn font** — SIL Open Font License 1.1 ([`assets/fonts/OFL.txt`](assets/fonts/OFL.txt)).

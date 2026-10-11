@@ -5,6 +5,8 @@
   "description": "Finglish → فارسی: type Persian with a Latin keyboard. An offline transliteration engine, a website to try it and a macOS keyboard.",
   "author": "Mehras Hojjat (https://mehrashojjat.com)",
   "license": "AGPL-3.0-only",
+  "repository": { "type": "git", "url": "git+https://github.com/mehrashojjat/Finglish.git" },
+  "bugs": { "url": "https://github.com/mehrashojjat/Finglish/issues" },
   "keywords": ["persian", "farsi", "finglish", "pinglish", "transliteration", "input-method", "ime", "offline", "macos"],
   "scripts": {
     "start": "node tools/bundle.js && node tools/serve.js",
@@ -28,5 +30,6 @@
     "mac:dmg": "mac/make_dmg.sh",
     "mac:release": "mac/make_dmg.sh --publish",
     "mac:uninstall": "mac/uninstall.sh"
-  }
+  },
+  "homepage": "https://finglish.mehrashojjat.com/"
 }

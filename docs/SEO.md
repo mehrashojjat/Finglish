@@ -34,7 +34,7 @@ npm run seo                                    # rewrites them (e.g. to refresh 
 
 ## After publishing
 
-1. `npm run seo -- <the address>`, commit, publish.
+1. `npm run seo -- <the address>`, commit, publish. (Done for **https://finglish.mehrashojjat.com/**; run it again only if the address changes.)
 2. Add the site to **Google Search Console** and **Bing Webmaster Tools**, and submit `sitemap.xml` (Bing can also pass it on to other engines through IndexNow). Check both pages with Google's *Rich Results Test* and the URL Inspection tool.
 3. On GitHub: set the repository's *About* description, website and topics (`persian`, `farsi`, `finglish`, `pinglish`, `transliteration`, `input-method`, `keyboard`, `macos`) — repository pages are also what assistants cite.
 4. Links help more than markup: a short post where Persian typists gather (Virgool, Telegram channels, Reddit r/farsi) pointing at the tool.

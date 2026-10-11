@@ -22,3 +22,4 @@ User-agent: MistralAI-User
 User-agent: cohere-ai
 Allow: /
 
+Sitemap: https://finglish.mehrashojjat.com/sitemap.xml
