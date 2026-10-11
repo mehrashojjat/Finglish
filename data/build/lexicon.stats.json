@@ -1,0 +1,8 @@
+{
+ "entries": 292057,
+ "subtitle_tokens": 63237389,
+ "wiki_tokens": 25255885,
+ "alpha": 0.7,
+ "min_sub": 3,
+ "min_wiki": 6
+}

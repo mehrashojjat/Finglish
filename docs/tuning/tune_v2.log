@@ -1,0 +1,22 @@
+train=501 dev=129
+start  train obj=0.9662 top1=0.956 | dev obj=0.9826 top1=0.977
+  round 1: lambda -> 0.410  train obj 0.9680
+  round 1: hintScale -> 1.250  train obj 0.9690
+  round 2: lambda -> 0.328  train obj 0.9701
+  round 2: omitScale -> 0.640  train obj 0.9702
+final  train obj=0.9702 top1=0.962 | dev obj=0.9761 top1=0.969
+{
+ "lambda": 0.32768,
+ "rho": 0.03,
+ "altScale": 1,
+ "omitScale": 0.6400000000000001,
+ "vowelScale": 1.5625,
+ "insScale": 1.25,
+ "doubleCost": 0.8,
+ "ezafeCost": 2.75,
+ "lazyOmit": 0.2,
+ "sparseOmit": 0.55,
+ "ayPenalty": 1.875,
+ "apostrophe": 1.6,
+ "hintScale": 1.25
+}

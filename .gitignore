@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+# large downloaded corpora and intermediates (re-creatable, see docs/DATA_SOURCES.md)
+data/raw/
+data/build/opus_*.tsv
+data/build/wiki_unigrams.tsv
+data/build/*.log
+__pycache__/
+*.pyc
+/build/
+/mac/build/
+/mac/dist/
+/mac/signing.local.env

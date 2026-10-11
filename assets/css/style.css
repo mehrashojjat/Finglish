@@ -1,0 +1,206 @@
+@font-face { font-family: "Vazirmatn"; src: url("../fonts/Vazirmatn-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Vazirmatn"; src: url("../fonts/Vazirmatn-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+/* Persian script inside Latin-script text (the English page: the «فارسی» link, examples, «می‌خواهم»…) uses Vazirmatn too, so it looks the same as on the Persian page.
+   Same font files, but only for the Arabic-script ranges, so Latin letters keep the system font. */
+@font-face { font-family: "VazirmatnFa"; src: url("../fonts/Vazirmatn-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+200C-200D, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "VazirmatnFa"; src: url("../fonts/Vazirmatn-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+0750-077F, U+200C-200D, U+FB50-FDFF, U+FE70-FEFF; }
+
+:root {
+  --bg: #f4f5f7; --card: #ffffff; --ink: #1c1f26; --muted: #6b7280; --line: #e3e6ec;
+  --accent: #2f6fed; --accent-ink: #ffffff; --accent-soft: #e8efff; --sel: #dbe7ff; --ok: #1a9b5b; --warn: #c27a00; --err: #c4352b;
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  --fa: "Vazirmatn", "Geeza Pro", "Noto Naskh Arabic", Tahoma, sans-serif;
+  --ui: "VazirmatnFa", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1115; --card: #171a21; --ink: #e7e9ee; --muted: #8b93a3; --line: #272b35;
+    --accent: #6f9bff; --accent-ink: #0b1020; --accent-soft: #1b2745; --sel: #24365f;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1115; --card: #171a21; --ink: #e7e9ee; --muted: #8b93a3; --line: #272b35;
+  --accent: #6f9bff; --accent-ink: #0b1020; --accent-soft: #1b2745; --sel: #24365f;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--ui); }
+code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+code { background: var(--accent-soft); padding: 1px 6px; border-radius: 6px; }
+kbd { background: var(--card); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; }
+.muted { color: var(--muted); }
+.grow { flex: 1; }
+
+.top { max-width: 920px; margin: 0 auto; padding: 24px 16px 8px; display: flex; align-items: center; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { width: 42px; height: 42px; display: block; }   /* img/logo.svg: Vazirmatn ف on the blue square (tools/make_logo.swift) */
+h1 { margin: 0; font-size: 20px; line-height: 1.2; }
+html[dir="rtl"] h1 { text-align: right; }      /* the Persian header is right-to-left; the title keeps its own left-to-right reading */
+.h1-name { display: block; }
+.sub { display: block; margin: 2px 0 0; color: var(--muted); font: 400 14px/1.6 var(--fa); }
+html[lang="fa"] body, html[lang="fa"] .btn { font-family: var(--fa); }
+
+
+main { max-width: 920px; margin: 0 auto; padding: 8px 16px 48px; display: grid; gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.card > h2 { margin: 0; padding: 14px 18px 0; font-size: 14px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+details.card > summary { cursor: pointer; padding: 14px 18px; font-weight: 600; list-style: none; }
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary::before { content: "▸"; display: inline-block; width: 1.2em; color: var(--muted); }
+details.card[open] > summary::before { content: "▾"; }
+
+.editor-card { overflow: hidden; }
+.status-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.hint { font-size: 13px; }
+
+#editor { display: block; width: 100%; min-height: 260px; height: 44vh; resize: vertical; border: 0; outline: 0; padding: 18px 20px; background: transparent; color: var(--ink);
+  font: 400 24px/2 var(--fa); }
+#editor::selection { background: var(--sel); color: inherit; }
+#editor::placeholder { color: var(--muted); opacity: .6; }
+.editor-foot { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.btn { border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 600 13px var(--ui); padding: 7px 14px; border-radius: 10px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn.ghost { color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.keys dl { margin: 0; padding: 10px 18px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px 24px; }
+.keys dl > div { display: flex; gap: 10px; align-items: baseline; }
+.keys dt { min-width: 118px; white-space: nowrap; }
+.keys dd { margin: 0; color: var(--muted); font-size: 13.5px; }
+
+.grid { padding: 0 18px 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px 24px; align-items: center; }
+.grid label { display: flex; align-items: center; gap: 10px; justify-content: space-between; font-size: 14px; }
+.grid label.chk { justify-content: flex-start; }
+.grid .row { display: flex; align-items: center; gap: 10px; }
+select { font: 14px var(--ui); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+details > p { margin: 0; padding: 0 18px 8px; font-size: 13px; }
+
+
+
+/* ---- candidate popup ---- */
+.cand-popup { position: fixed; z-index: 50; min-width: 168px; max-width: 320px; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; font-family: var(--fa); user-select: none; }
+.cand-popup[hidden] { display: none; }
+.cp-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 12px; background: var(--accent-soft); direction: ltr; }
+.cp-buf { font: 600 14px ui-monospace, Menlo, monospace; color: var(--accent); }
+.cp-mode { font: 600 10.5px var(--ui); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.cp-list { list-style: none; margin: 0; padding: 4px; }
+.cp-list li { display: flex; align-items: center; gap: 10px; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+.cp-list li:hover { background: var(--accent-soft); }
+.cp-list li.sel { background: var(--sel); }
+.cp-n { width: 18px; text-align: center; font: 600 12px var(--ui); color: var(--muted); direction: ltr; }
+.cp-t { flex: 1; font-size: 21px; line-height: 1.7; }
+.cp-d { font: 11px ui-monospace, Menlo, monospace; color: var(--muted); direction: ltr; }
+.cp-latin { display: flex; align-items: center; gap: 10px; margin: 0 4px 4px; padding: 5px 10px; border-top: 1px solid var(--line); border-radius: 0 0 8px 8px; cursor: pointer; }
+.cp-latin:hover { background: var(--accent-soft); }
+.cp-latin.sel { background: var(--sel); }
+.cp-latin .cp-t { font: 15px/1.6 ui-monospace, Menlo, monospace; direction: ltr; text-align: left; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp-latin.sel .cp-t { color: var(--ink); }
+.cp-list li.k-alias .cp-t::after { content: " ★"; font-size: 11px; color: var(--accent); }
+.cp-list li.k-oov .cp-t::after { content: " ✦"; font-size: 11px; color: var(--warn); }
+.cp-foot { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 4px 8px 6px; font: 12px var(--ui); color: var(--muted); direction: ltr; }
+.cp-foot button { border: 0; background: transparent; color: var(--ink); font-size: 18px; line-height: 1; padding: 0 8px; cursor: pointer; border-radius: 6px; }
+.cp-foot button:disabled { opacity: .3; cursor: default; }
+.cp-foot button:not(:disabled):hover { background: var(--accent-soft); }
+
+@media (max-width: 560px) {
+  #editor { font-size: 21px; }
+}
+@media (max-width: 520px) {
+  .top { flex-wrap: wrap; row-gap: 10px; }
+  .top-actions { margin-inline-start: 0; width: 100%; justify-content: space-between; }
+}
+
+/* the explanatory text and the FAQ (they are also what search engines and AI assistants read) */
+.prose { padding: 6px 18px 16px; font-size: 15px; line-height: 2; }
+.prose p { margin: 0 0 10px; }
+.prose h3 { margin: 14px 0 4px; font-size: 15px; }
+.prose ol { margin: 0; padding-inline-start: 1.4em; }
+.prose a { color: var(--accent); }
+.examples { width: 100%; border-collapse: collapse; margin: 2px 0 4px; }
+.examples caption { caption-side: bottom; padding-top: 8px; color: var(--muted); font-size: 12.5px; text-align: start; }
+.examples th, .examples td { padding: 7px 12px; border-bottom: 1px solid var(--line); text-align: start; }
+.examples th { color: var(--muted); font-weight: 600; font-size: 13px; }
+.examples td[lang="fa"] { font: 400 20px/1.7 var(--fa); }
+.faq-list { padding: 0 12px 10px; }
+details.q { border-top: 1px solid var(--line); }
+details.q > summary { cursor: pointer; padding: 12px 6px; font-weight: 600; list-style: none; line-height: 1.8; }
+details.q > summary::-webkit-details-marker { display: none; }
+details.q > summary::before { content: "▸"; display: inline-block; width: 1.2em; color: var(--muted); }
+html[dir="rtl"] details.q > summary::before { content: "◂"; }
+details.q[open] > summary::before { content: "▾"; }
+details.q .a { padding: 0 6px 12px; color: var(--muted); font-size: 14.5px; line-height: 2; }
+details.q .a p { margin: 0; }
+details.q > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* Persian (right-to-left) settings cards: Vazirmatn, and the ▸ marker points the other way */
+.fa-ui, .fa-ui select, .fa-ui .btn { font-family: var(--fa); }
+.fa-ui .grid label { font-size: 14.5px; line-height: 1.8; }
+.fa-ui em { font-style: normal; color: var(--muted); }
+.fa-ui code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+details.card.fa-ui > summary::before { content: "◂"; }
+details.card.fa-ui[open] > summary::before { content: "▾"; }
+.card.fa-ui > h2 { text-transform: none; letter-spacing: 0; font-size: 15px; }
+.keys.fa-ui dt { text-align: right; }                  /* the key caps stay left-to-right (dir="ltr"), the group sits at the right edge */
+.keys.fa-ui dd { font-size: 14px; line-height: 1.8; }
+
+/* header: the download button sits at the far (left) end of the right-to-left header */
+.top-actions { margin-inline-start: auto; display: flex; align-items: center; gap: 12px; }
+.lang-switch { font: 600 13px var(--ui); color: var(--muted); text-decoration: none; padding: 7px 10px; border-radius: 10px; }
+.lang-switch:hover, .lang-switch:focus-visible { color: var(--accent); background: var(--accent-soft); outline: none; }
+.dl-open { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 14px; }
+
+/* download dialog */
+.dl { border: 0; padding: 0; border-radius: 18px; background: var(--card); color: var(--ink); box-shadow: var(--shadow); width: min(440px, calc(100vw - 32px)); }
+.dl::backdrop { background: rgba(10, 14, 22, .5); }
+.dl-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 20px 4px; }
+.dl-head form { margin: 0; }
+.dl h2 { margin: 0; font-size: 18px; }
+.dl-sub { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
+.dl-x { border: 0; background: transparent; color: var(--muted); font: 400 26px/1 var(--ui); width: 34px; height: 34px; border-radius: 10px; cursor: pointer; }
+.dl-x:hover { background: var(--accent-soft); color: var(--ink); }
+.dl-x:focus-visible, .dl-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dl-list { list-style: none; margin: 0; padding: 12px 16px 18px; display: grid; gap: 10px; }
+.dl-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: inherit; text-decoration: none; }
+a.dl-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+.dl-item.soon { opacity: .62; cursor: default; }
+.dl-ico { width: 30px; height: 30px; flex: none; color: var(--muted); }
+a.dl-item .dl-ico { color: var(--accent); }
+.dl-text { display: flex; flex-direction: column; min-width: 0; }
+.dl-name { font: 700 16px var(--ui); text-align: start; }
+html[dir="rtl"] .dl-name { text-align: right; }
+.dl-meta { color: var(--muted); font-size: 13px; }
+.dl-tag { margin-inline-start: auto; flex: none; font-size: 12.5px; font-weight: 600; padding: 3px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.soon .dl-tag { background: var(--line); color: var(--muted); }
+
+/* footer */
+.foot { max-width: 920px; margin: 0 auto; padding: 4px 16px 32px; text-align: center; color: var(--muted); font-size: 13px; }
+.foot p { margin: 0; }
+.foot a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.foot a:hover { color: var(--accent); }
+
+/* the one thing the page says about loading: a failure */
+.boot-error { margin: 0; padding: 10px 14px; color: var(--err); font-size: 13px; }
+
+/* About */
+.about-body { display: flex; gap: 16px; padding: 6px 18px 14px; align-items: flex-start; }
+.about-icon { width: 64px; height: 64px; flex: none; display: block; }
+.about h3 { margin: 0 0 4px; font-size: 18px; }
+.about p { margin: 0 0 8px; font-size: 14.5px; line-height: 1.9; }
+.about .dev { margin: 6px 0 0; }
+.about a { color: var(--accent); }
+.about-data { border-top: 1px solid var(--line); padding: 14px 18px 8px; }
+.about-data h3 { font-size: 15px; color: var(--muted); }
+.about-data p { color: var(--muted); font-size: 13.5px; }
+
+/* 404.html */
+.notfound { max-width: 520px; margin: 12vh auto; padding: 0 16px; text-align: center; display: block; }
+.notfound .logo { margin: 0 auto 12px; width: 64px; height: 64px; }
+.notfound h1 { font-size: 22px; text-align: center; }
+.notfound h2 { margin: 28px 0 0; font-size: 17px; color: var(--muted); }
+.notfound a { color: var(--accent); }

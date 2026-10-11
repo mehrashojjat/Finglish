@@ -1,0 +1,73 @@
+# Sentence-level gold: each line = finglish sentence <TAB> persian sentence, SAME number of space-separated tokens.
+# Used to measure the value of previous-word context (tools: tests/eval_context.js). Colloquial chat register.
+man dar khane hastam	من در خونه هستم
+to koja miri	تو کجا میری
+emrooz hava kheili khoobe	امروز هوا خیلی خوبه
+man nemidoonam chi bayad bokonam	من نمیدونم چی باید بکنم
+dar ra baz kon	در را باز کن
+in kar ro bad nakardam	این کار رو بد نکردم
+bad az shaam miam	بعد از شام میام
+ketab ra az roo miz bardar	کتاب را از روی میز بردار
+ye ketab khoob khoondam	یه کتاب خوب خوندم
+to dooste man hasti	تو دوست من هستی
+man doost daram biam	من دوست دارم بیام
+bad nist	بد نیست
+in ketab kheili bade	این کتاب خیلی بده
+oon dar baste bood	اون در بسته بود
+daram miram khoone	دارم میرم خونه
+man ye dar daram	من یه در دارم
+ya ketab ya daftar	یا کتاب یا دفتر
+ya inja miam ya oonja	یا اینجا میام یا اونجا
+oon ya ketab dare	اون یه کتاب داره
+khoda hafez	خدا حافظ
+ye chiz bego	یه چیز بگو
+chi shod	چی شد
+chi mikhay	چی میخوای
+ke miad	کی میاد
+mikhastam beram vali nashod	میخواستم برم ولی نشد
+fekr kardam ke miay	فکر کردم که میای
+az kojaa oomadi	از کجا اومدی
+be man begoo	به من بگو
+be khoone raftam	به خونه رفتم
+ba man biya	با من بیا
+ba doostam raftam	با دوستام رفتم
+man hamin alan oomadam	من همین الان اومدم
+alan nemitoonam	الان نمیتونم
+hala chi mikhay	حالا چی میخوای
+shab khosh	شب خوش
+emshab kheili sard bood	امشب خیلی سرد بود
+sar man dard mikone	سر من درد میکنه
+dard dare	درد داره
+man dard daram	من درد دارم
+gol ro abyari kon	گل رو آبیاری کن
+hamsayeye ma khoob ast	همسایهی ما خوب است
+ketabe man koja ast	کتاب من کجا است
+zan va shohar	زن و شوهر
+man va to	من و تو
+ye zan oomad	یه زن اومد
+oon zan khoobe	اون زن خوبه
+sher bekhoon	شعر بخون
+shahr khoobi dare	شهر خوبی داره
+pool nadaram	پول ندارم
+pool dar kif bood	پول در کیف بود
+kar dashtam	کار داشتم
+kar khoobi bood	کار خوبی بود
+oon kar ro anjam bede	اون کار رو انجام بده
+bacheha khabidan	بچهها خوابیدن
+dokhtar khoob	دختر خوب
+pesar bad	پسر بد
+in pesar kheili khoobe	این پسر خیلی خوبه
+yek rooz miam	یک روز میام
+har rooz miram	هر روز میرم
+ta farda sabr kon	تا فردا صبر کن
+ta in zaman	تا این زمان
+to ro dooset daram	تو رو دوست دارم
+to chi migi	تو چی میگی
+in chiye	این چیه
+oon koja bood	اون کجا بود
+oonja chi bood	اونجا چی بود
+kheili mamnoon	خیلی ممنون
+mersi az shoma	مرسی از شما
+lotfan sabr konid	لطفا صبر کنید
+salam khoobi	سلام خوبی
+salam chetori	سلام چطوری

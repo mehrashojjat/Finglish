@@ -1,0 +1,32 @@
+{
+  "name": "finglish-to-persian",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Finglish → فارسی: type Persian with a Latin keyboard. An offline transliteration engine, a website to try it and a macOS keyboard.",
+  "author": "Mehras Hojjat (https://mehrashojjat.com)",
+  "license": "AGPL-3.0-only",
+  "keywords": ["persian", "farsi", "finglish", "pinglish", "transliteration", "input-method", "ime", "offline", "macos"],
+  "scripts": {
+    "start": "node tools/bundle.js && node tools/serve.js",
+    "serve": "node tools/serve.js --no-open",
+    "bundle": "node tools/bundle.js",
+    "seo": "node tools/seo.js",
+    "seo:images": "node tools/make_seo_images.js",
+    "test": "node --test tests/engine.test.js tests/site.test.js",
+    "e2e": "cd tests/e2e && npm install --silent && node smoke.js && node site.js",
+    "check": "npm test && npm run e2e",
+    "eval": "node tests/eval.js --gold tests/gold/natural_1.tsv --gold tests/gold/natural_2_heldout.tsv --gold tests/gold/inflected_3.tsv",
+    "report": "node --expose-gc tests/report.js",
+    "cli": "node tools/ime-cli.js",
+    "parity": "node tools/bundle.js && node tools/make_parity_vectors.js",
+    "proof:offline": "node tests/audit_offline.js && node tests/no_network_selftest.js && NODE_OPTIONS='--require ./tests/no_network_preload.js' node --test tests/engine.test.js && cd tests/e2e && node offline_proof.js",
+    "proof:mac": "npm run parity && mkdir -p build && swiftc -swift-version 5 -O tests/swift_host/main.swift -o build/farsi-host-check && build/farsi-host-check engine/dist tests/golden/parity_vectors.jsonl && cd tests/e2e && node parity_browser.js",
+    "proof": "npm run proof:offline && npm run proof:mac",
+    "mac:build": "mac/build.sh",
+    "mac:test": "mac/test.sh",
+    "mac:install": "mac/install.sh",
+    "mac:dmg": "mac/make_dmg.sh",
+    "mac:release": "mac/make_dmg.sh --publish",
+    "mac:uninstall": "mac/uninstall.sh"
+  }
+}

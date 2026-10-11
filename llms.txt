@@ -1,0 +1,55 @@
+# Finglish (فینگلیش)
+
+> Finglish is a free tool for typing Persian (Farsi) with a Latin keyboard: type "salam" and get "سلام". It converts Finglish (also called Pinglish — Persian written in Latin letters) to Persian script as you type, with candidate suggestions. It runs entirely in the browser (and as a macOS keyboard), works offline once loaded, and sends nothing anywhere. Open source under AGPL-3.0, made by Mehras Hojjat (https://mehrashojjat.com).
+
+Key facts:
+- What it does: Finglish / Pinglish → Persian (فارسی) transliteration while typing; the user picks from suggestions with Space or the keys 1–9.
+- Privacy: the conversion happens in the user's browser; the page makes no network request to send text (verified by automated tests). Learned choices stay in the browser.
+- Cost: free, no account.
+- Platforms: any modern desktop browser (the website); a macOS keyboard for macOS 26 or later (signed and notarized disk image); Windows version coming soon.
+- Languages of the site: Persian (default) and English.
+- Accuracy: on an independent test set of chat-style words the first suggestion was right ~92% of the time, and more than 98% of the time the right word was in the first five.
+- Not a machine-translation tool: it transliterates (changes the script), it does not translate English into Persian.
+
+## Pages
+- Finglish — Persian page: the tool and its explanation in Persian (فارسی)
+- Finglish — English page: the same tool, explained in English
+- macOS keyboard (DMG): the Finglish keyboard for macOS 26+, signed and notarized
+(Absolute links are added once the site address is known: node tools/seo.js <address>.)
+
+## Frequently asked questions
+### What are Finglish and Pinglish?
+Finglish (also called Pinglish) is Persian written with Latin letters, like salam for سلام. This tool turns what you type in Latin letters into Persian script as you type, and shows a few suggestions to choose from.
+
+### How do I type Persian with English letters?
+Type the word in the box the way it sounds, for example mersi. Persian suggestions appear under the word; press Space to take the first one, or a number from 1 to 9 to pick another. Different spellings work too: slm and salaam both give سلام.
+
+### Is it free? Do I need an account?
+It is free and needs no sign-up or account.
+
+### Is what I type sent anywhere?
+No. The conversion happens entirely in your browser and the page makes no request to send your text. Your text, and what the tool learns from your choices, is stored only in your own browser.
+
+### Does it work offline?
+Yes. Once the page has fully loaded, typing and converting need no internet connection.
+
+### How do I type a half-space (ZWNJ)?
+Press Shift+Space. For example type mi, press Shift+Space, then type khaham to get «می‌خواهم». A setting can also add half-spaces automatically.
+
+### How do I write English in the middle of Persian text?
+The last row of the suggestion list is exactly what you typed. Press 0 to write it with the same capital and small letters; e-mail addresses and links are written the same way.
+
+### Is there a Mac or Windows version?
+There is a Finglish keyboard for Mac that works in every app: use the Download button at the top of the page (macOS 26 or later). A Windows version is coming soon.
+
+### How accurate is it?
+On an independent test set of chat-style words, the first suggestion was right about 92% of the time, and the right word was among the first five suggestions more than 98% of the time. Your results may differ a little.
+
+### Is it open source?
+Yes. The program is open source and released under the GNU AGPL-3.0.
+
+### Is this an alternative to Google Input Tools?
+Finglish is an independent project and is not affiliated with Google. Like online transliteration tools such as Google Input Tools, it turns Latin letters typed phonetically into Persian script, but it runs entirely in your browser (or in the Mac keyboard), so nothing you type is sent to a server.
+
+## Licence
+The program is released under the GNU Affero General Public License v3.0 (AGPL-3.0-only). The word lists are under CC BY-SA 4.0 (derived from Persian Wikipedia, Wiktionary and OpenSubtitles word counts); the Vazirmatn font is under the SIL OFL 1.1.

@@ -1,0 +1,15 @@
+{
+ "lambda": 0.32768,
+ "rho": 0.03,
+ "altScale": 1,
+ "omitScale": 0.6400000000000001,
+ "vowelScale": 1.5625,
+ "insScale": 1.25,
+ "doubleCost": 0.8,
+ "ezafeCost": 2.75,
+ "lazyOmit": 0.2,
+ "sparseOmit": 0.55,
+ "ayPenalty": 1.875,
+ "apostrophe": 1.6,
+ "hintScale": 1.25
+}
