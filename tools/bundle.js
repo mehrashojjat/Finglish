@@ -5,7 +5,7 @@
  *   node tools/bundle.js
  * Writes:
  *   engine/dist/                      THE HOST PACKAGE: farsi-ime-engine.js (global `FarsiIME`, incl. FarsiIME.host) + lexicon.tsv,
- *                                     bigrams.tsv, aliases.tsv + VERSION.json (sizes, sha256). A Mac app embeds exactly this folder.
+ *                                     bigrams.tsv, aliases.tsv + VERSION.json (sizes, sha256). Native apps embed exactly this package.
  *   assets/vendor/farsi-ime-engine.js    the same file, for the website
  *   assets/data/*.js                     the SAME lexicon/bigrams/aliases strings wrapped as scripts for the website
  *   (legacy note) assets/data/lexicon.js window.FARSI_LEXICON = "<tsv>"  (so the site also works from file://)
@@ -54,6 +54,19 @@ fs.writeFileSync(path.join(dist, 'VERSION.json'), JSON.stringify({
   lexiconWords: tsv.split('\n').length, bytes: Object.fromEntries(distFiles.map(f => [f, fs.statSync(path.join(dist, f)).size])),
   sha256: Object.fromEntries(distFiles.map(f => [f, sha(f)])),
 }, null, 1) + '\n');
+
+// The Xcode keyboard target has its own resource folder so the project is self-contained. Keyboard extensions have a
+// much smaller memory budget than an app, so embed a compact, frequency-sorted lexicon there. The macOS/web host package
+// above remains the complete artifact and is byte-identical to the website's engine data.
+const iosEngine = path.join(ROOT, 'iOS/Finglish/Resources/Engine');
+if (fs.existsSync(iosEngine)) {
+  const iosLexiconWords = 40000;
+  fs.copyFileSync(path.join(dist, 'farsi-ime-engine.js'), path.join(iosEngine, 'farsi-ime-engine.js'));
+  fs.writeFileSync(path.join(iosEngine, 'lexicon.tsv'), tsv.split('\n').slice(0, iosLexiconWords).join('\n') + '\n');
+  fs.copyFileSync(path.join(dist, 'bigrams.tsv'), path.join(iosEngine, 'bigrams.tsv'));
+  fs.copyFileSync(path.join(dist, 'aliases.tsv'), path.join(iosEngine, 'aliases.tsv'));
+  console.log('iOS keyboard profile:', iosLexiconWords, 'lexicon entries; OOV/morph/context disabled at runtime');
+}
 
 // 2) the website gets the very same strings, wrapped as scripts so it also works from file://
 fs.writeFileSync(path.join(ROOT, 'assets/data/lexicon.js'), 'window.FARSI_LEXICON = ' + JSON.stringify(tsv) + ';\n');

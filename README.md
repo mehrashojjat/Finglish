@@ -1,14 +1,14 @@
 # Finglish → فارسی
 
 **Type Persian with English letters — a free Finglish / Pinglish to Persian converter and keyboard.** Write `salam khoobi`, get سلام خوبی — pick from a list of candidates and keep going.
-A website to try it, and a macOS keyboard to use it in every app. Both run the same offline engine: nothing you type ever leaves your computer.
+A website to try it, a macOS keyboard, and an iOS keyboard extension to use it in other apps. They run the same offline engine: nothing you type ever leaves your device.
 
 **Website: [finglish.mehrashojjat.com](https://finglish.mehrashojjat.com)** · **Source: [github.com/mehrashojjat/Finglish](https://github.com/mehrashojjat/Finglish)** · by [Mehras Hojjat](https://mehrashojjat.com)
 
 ![The website: typing «mikham» shows Persian candidates under the cursor](docs/screenshots/app_popup.png)
 
 * **Offline and private.** No server, no account, no tracking. The page and the keyboard contain no network code at all — checked by tests (see [Privacy](#privacy-offline-and-proven)).
-* **One engine everywhere.** `engine/dist/` is the single shipped artifact; the website and the Mac keyboard run exactly the same code and data (≈ 2 ms per keystroke).
+* **One engine everywhere.** `engine/dist/` is the single shipped artifact; the website, Mac keyboard, and iOS keyboard use the same code and data (≈ 2 ms per keystroke in the engine).
 * **Understands how people really type.** `slm`, `salaam`, `khoobi`/`khobi`, `merci`/`mersi`, `mikham`, `ketabhayeman` → the right word, for colloquial and formal Persian.
 * **Free and open source** under the GNU AGPL-3.0 ([Licence](#licence)).
 * **In Persian and English:** the site has a Persian page (`/`) and an English page (`/en/`), set up to be found by search engines and AI assistants ([`docs/SEO.md`](docs/SEO.md)).
@@ -18,6 +18,7 @@ A website to try it, and a macOS keyboard to use it in every app. Both run the s
 | | |
 |---|---|
 | **macOS** 26 or newer, Apple silicon and Intel (4.8 MB, signed and notarized by Apple) | [`downloads/Finglish.dmg`](downloads/Finglish.dmg) — or the **دانلود** button on [the website](https://finglish.mehrashojjat.com) |
+| **iOS** 26 or newer (Xcode project + keyboard extension) | [`iOS/README.md`](iOS/README.md) — install the app on an iPhone, then enable Finglish under Settings → General → Keyboard |
 | **Windows** | coming soon |
 
 Open the image, drag **Finglish Settings** onto **Applications**, open it. The first launch installs the keyboard and shows a four-step guide for the one thing macOS makes you do yourself: add the keyboard under *System Settings → Keyboard → Text Input → Input Sources*.
@@ -75,6 +76,7 @@ en/index.html  the website (English)           engine/      the offline engine (
 assets/        css · js · fonts · logo · images · generated data (assets/data, assets/vendor)
 robots.txt · llms.txt · sitemap.xml · 404.html · favicon.ico · apple-touch-icon.png   for search engines and AI assistants
 mac/           the macOS keyboard + settings app, DMG scripts      data/   word lists: aliases, lexicon, bigrams
+iOS/           the iOS settings app + custom keyboard Xcode project (iOS 26+)
 docs/          ARCHITECTURE · ENGINE · DATA_SOURCES · RESULTS · TUNING · SEO
 tools/         build, bundle, serve and tuning scripts             tests/  unit, site and browser tests · gold sets · parity vectors
 LICENSE        GNU AGPL-3.0
@@ -93,6 +95,7 @@ npm run seo -- <address>   # write the files that need the published address (ca
 npm run bundle         # rebuild engine/dist and assets/{vendor,data} after changing engine/ or data/   (npm start does it for you)
 npm run parity         # regenerate tests/golden/parity_vectors.jsonl after an intentional engine change (review with git diff)
 npm run mac:test       # the Mac keyboard's tests (needs Xcode)       npm run mac:install   # install it for yourself
+npm run ios:test       # iOS session tests + plist validation (Xcode toolchain)
 npm run mac:release    # build the DMG and publish it to downloads/ (see mac/README.md)
 ```
 

@@ -29,7 +29,8 @@
     "mac:install": "mac/install.sh",
     "mac:dmg": "mac/make_dmg.sh",
     "mac:release": "mac/make_dmg.sh --publish",
-    "mac:uninstall": "mac/uninstall.sh"
+    "mac:uninstall": "mac/uninstall.sh",
+    "ios:test": "iOS/test.sh"
   },
   "homepage": "https://finglish.mehrashojjat.com/"
 }

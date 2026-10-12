@@ -547,9 +547,12 @@ class Engine {
     this.lex = lexicon;
     this.opt = Object.assign({}, DEFAULTS, options || {});
     this.channel = createChannel(this.opt.channel);
-    this.lm = new CharLM();
-    this.lm.train(lexicon.words);
-    this.oov = createOOV(this.channel, this.lm);
+    // Small hosts such as iOS keyboard extensions can opt out of the
+    // language-model/OOV path. Avoid allocating and training it at all in
+    // that mode; the normal/default engine remains unchanged.
+    this.lm = (this.opt.oov || this.opt.morph) ? new CharLM() : null;
+    if (this.lm) this.lm.train(lexicon.words);
+    this.oov = this.opt.oov ? createOOV(this.channel, this.lm) : null;
     this.lnRho = Math.log(this.opt.rho);
     this.lnNotRho = Math.log(1 - this.opt.rho);
     this.user = new Map();      // personalisation: "latin|persian" -> count

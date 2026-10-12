@@ -7,6 +7,7 @@
  ─────────────────────────────────────────────         ─────────────────────────────────────────────
  engine/src/   noisy-channel transliteration (JS)       index.html + assets/   the website (offline, static)
  engine/dist/  one-file package + word lists            mac/                   the macOS keyboard (JavaScriptCore) + settings app
+                                                          iOS/                   the iOS settings app + custom keyboard extension (JavaScriptCore)
  data/         aliases, lexicon, bigrams                downloads/             the Mac disk image the website offers
 ```
 
@@ -34,6 +35,7 @@ Farsi Transliteration/
 │  ├─ raw/                    downloaded corpora (large; not in git)
 │  └─ build/                  lexicon.tsv, bigrams.tsv (in git) and the intermediate counts (not in git)
 ├─ mac/                       the macOS keyboard + settings app: Sources/ Resources/ Tests/ tools/ and the build, test, DMG, install scripts (see mac/README.md)
+├─ iOS/                       the iOS 26+ Xcode project: settings app, keyboard extension, App Group store, copied engine artifact, and tests (see iOS/README.md)
 ├─ docs/                      ARCHITECTURE (this file) · ENGINE · DATA_SOURCES · RESULTS (generated) · TUNING (+ tuning/ raw logs) · SEO · screenshots/
 ├─ tools/                     count_*.py · build_*.py · hints.py · tune.js · bundle.js · serve.js · seo.js · ime-cli.js · make_*.{py,js,swift}
 ├─ tests/
