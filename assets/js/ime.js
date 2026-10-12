@@ -85,16 +85,43 @@
         this.nativeTs = now;
         this.lastProgrammatic = false;
       });
+      ta.addEventListener('beforeinput', e => this.onBeforeInput(e));
       ta.addEventListener('keydown', e => this.onKeydown(e));
       ta.addEventListener('blur', () => this.finish());
       ta.addEventListener('scroll', () => this.comp && this.place());
       document.addEventListener('selectionchange', () => this.onSelectionChange());
-      popup.addEventListener('mousedown', e => this.onPopupMouse(e));
+      popup.addEventListener('pointerdown', e => this.onPopupMouse(e));
       window.addEventListener('resize', () => this.comp && this.place());
     }
 
     get s() { return this.host.settings; }
     get composing() { return !!this.comp; }
+
+    onBeforeInput(e) {
+      if (e.isComposing) return;
+      const type = e.inputType || '';
+      if (type === 'insertText' || type === 'insertReplacementText' || type === 'insertFromPaste') {
+        if (typeof e.data !== 'string' || !e.data) return;
+        e.preventDefault();
+        for (const ch of e.data) this.handleInputChar(ch);
+        return;
+      }
+      if (type === 'deleteContentBackward' && this.comp) {
+        e.preventDefault();
+        this.keyComposing({ key: 'Backspace', shiftKey: false, preventDefault() {} });
+        return;
+      }
+      if ((type === 'insertLineBreak' || type === 'insertParagraph') && this.comp) {
+        e.preventDefault();
+        this.keyComposing({ key: 'Enter', shiftKey: false, preventDefault() {} });
+      }
+    }
+
+    handleInputChar(ch) {
+      const event = { key: ch, shiftKey: false, preventDefault() {} };
+      if (this.comp) this.keyComposing(event);
+      else this.keyIdle(event);
+    }
 
     // ------------------------------------------------------------------ keyboard
     onKeydown(e) {
