@@ -69,6 +69,8 @@
 		200000000000000000000016 /* FinglishKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FinglishKeyboard.entitlements; sourceTree = "<group>"; };
 		200000000000000000000017 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		200000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		200000000000000000000019 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		200000000000000000000020 /* Signing.local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.local.xcconfig.example; sourceTree = "<group>"; };
 		300000000000000000000001 /* Finglish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finglish.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000002 /* FinglishKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FinglishKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -105,6 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				400000000000000000000002 /* Finglish */,
+				200000000000000000000019 /* Signing.xcconfig */,
+				200000000000000000000020 /* Signing.local.xcconfig.example */,
 				400000000000000000000007 /* Products */,
 				2CE7EA8A307D46B0000E1CDB /* Recovered References */,
 			);
@@ -325,6 +329,7 @@
 /* Begin XCBuildConfiguration section */
 		800000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -335,6 +340,7 @@
 		};
 		800000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -345,6 +351,7 @@
 		};
 		810000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/Finglish.entitlements;
@@ -373,6 +380,7 @@
 		};
 		810000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/Finglish.entitlements;
@@ -398,6 +406,7 @@
 		};
 		820000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/FinglishKeyboard.entitlements;
@@ -424,6 +433,7 @@
 		};
 		820000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 200000000000000000000019 /* Signing.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/FinglishKeyboard.entitlements;

@@ -1,0 +1,5 @@
+// This file is safe to commit. Keep machine-specific signing values in
+// Signing.local.xcconfig, which is ignored by Git.
+#include? "Signing.local.xcconfig"
+
+DEVELOPMENT_TEAM = $(FINGLISH_DEVELOPMENT_TEAM)

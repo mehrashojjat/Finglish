@@ -11,3 +11,4 @@ __pycache__/
 /mac/build/
 /mac/dist/
 /mac/signing.local.env
+iOS/Signing.local.xcconfig

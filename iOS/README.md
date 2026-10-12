@@ -2,6 +2,20 @@
 
 This folder contains the Xcode project for the iOS Finglish app and its custom keyboard extension. It targets iOS 26 and newer.
 
+## Local signing setup
+
+The project keeps Apple signing values out of source control while allowing
+each developer to build and run it normally. Copy the example configuration
+and replace `YOUR_TEAM_ID` with the Team ID shown in Xcode:
+
+```sh
+cp iOS/Signing.local.xcconfig.example iOS/Signing.local.xcconfig
+```
+
+`Signing.local.xcconfig` is ignored by Git. The committed `Signing.xcconfig`
+loads it automatically, so the local Team ID is available to Xcode without
+being included in commits or pull requests.
+
 ## Important iOS limitation
 
 iOS does not expose the Apple keyboard as a surface that another app can augment. A custom keyboard extension replaces the current keyboard and must provide its keyboard view. It also cannot draw a floating panel over the host app or read the caret's screen coordinates.
@@ -10,8 +24,8 @@ The extension therefore delegates all key geometry, sizing, number/symbol pages,
 
 ## Test on an iPhone
 
-1. Open `Finglish.xcodeproj` in Xcode 26 or newer.
-2. Select the `Finglish` app target and choose your Apple development team in Signing & Capabilities. Keep the App Groups capability enabled for `group.com.finglish.ios` on both the app and keyboard targets.
+1. Open `Finglish.xcodeproj` in Xcode 26 or newer. Sign in to Xcode with the Apple Developer account that owns the app identifiers, if needed.
+2. The app and keyboard targets load the Team ID from the ignored `Signing.local.xcconfig`; you should not need to choose a team in the project or save one into `project.pbxproj`. Keep the App Groups capability enabled for `group.com.finglish.ios` on both the app and keyboard targets.
 3. Select your connected iPhone as the run destination and run the `Finglish` scheme.
 4. In the app, open the keyboard settings instructions. On the phone go to **Settings → General → Keyboard → Keyboards → Add New Keyboard → Finglish**.
 5. Turn on **Allow Full Access**. The keyboard does not use the network; full access is required only so the extension can share its offline engine, settings, and learned choices with the settings app through the App Group container.
@@ -23,6 +37,6 @@ The status indicator in the app is best-effort because Apple's public `UITextInp
 
 The keyboard extension uses the same transliteration engine and channel, but a compact 40,000-entry frequency-sorted lexicon. Its heavier macOS/web OOV, morphology, and previous-word-context models are left out of the extension process because iOS applies a separate, much tighter memory budget to custom keyboards; the full 292,000-entry package remains unchanged for macOS and the website.
 
-No notarization or distribution signing is included here. Select a real development team in Xcode when testing on a device.
+No notarization or distribution signing is included here. Xcode still needs the corresponding Apple Developer account signed in locally to install on a device, but the Team ID itself stays in the ignored local configuration.
 
 When the transliteration engine changes, run `npm run bundle`; the bundler refreshes `engine/dist/`, the website assets, and this Xcode target's compact keyboard resources.
