@@ -118,6 +118,10 @@
     }
 
     handleInputChar(ch) {
+      // beforeinput is cancelable, so a plain space received from a mobile
+      // keyboard must be inserted here when no word is being composed. If it
+      // is left to the browser after preventDefault(), the space disappears.
+      if (!this.comp && ch === ' ') { this.insert(ch); return; }
       const event = { key: ch, shiftKey: false, preventDefault() {} };
       if (this.comp) this.keyComposing(event);
       else this.keyIdle(event);
@@ -126,6 +130,11 @@
     // ------------------------------------------------------------------ keyboard
     onKeydown(e) {
       if (e.isComposing) return;
+      // Older Android Chrome versions emit a sentinel keydown after the real
+      // beforeinput event from the soft keyboard. The beforeinput handler has
+      // already consumed the character; treating "Unidentified" as a key
+      // would finish the composition after every letter (salam → سالام).
+      if (e.key === 'Unidentified') return;
       if ((e.metaKey || e.ctrlKey) && !e.altKey) {
         const k = e.key.toLowerCase();
         if (k === 'z' || (k === 'y' && e.ctrlKey)) {       // our own undo stack (one step per word)

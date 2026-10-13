@@ -39,6 +39,29 @@ const ok = (cond, msg, extra) => { console.log((cond ? 'PASS ' : 'FAIL ') + msg 
   ok((await value()) === 'سلام ', 'space commits + adds a space', await value());
   ok((await popupText()) === null, 'popup hidden after commit');
 
+  // Older Android Chrome sends a real beforeinput for soft-keyboard text and
+  // then a sentinel keydown with key=Unidentified. That keydown must not
+  // commit the composition after each character.
+  await page.evaluate(() => { const e = document.getElementById('editor'); e.value = ''; e.focus(); });
+  await page.evaluate(() => {
+    const e = document.getElementById('editor');
+    const send = data => {
+      e.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data, bubbles: true, cancelable: true }));
+      e.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', bubbles: true, cancelable: true }));
+      e.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    for (const ch of 'salam ') send(ch);
+  });
+  ok((await value()) === 'سلام ', 'Android soft-keyboard sentinel keydowns do not split a word', await value());
+
+  await page.evaluate(() => {
+    const e = document.getElementById('editor');
+    e.value = 'سلام'; e.setSelectionRange(e.value.length, e.value.length); e.focus();
+    e.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: ' ', bubbles: true, cancelable: true }));
+    e.dispatchEvent(new KeyboardEvent('keydown', { key: 'Unidentified', bubbles: true, cancelable: true }));
+  });
+  ok((await value()) === 'سلام ', 'Android beforeinput preserves a plain space after a committed word', await value());
+
   await type('khoobi');
   await page.keyboard.press('Enter');
   ok((await value()) === 'سلام خوبی ', 'enter commits + adds a space', await value());
