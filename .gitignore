@@ -12,3 +12,10 @@ __pycache__/
 /mac/dist/
 /mac/signing.local.env
 iOS/Signing.local.xcconfig
+
+# Android Studio / Gradle local state
+Android/.gradle/
+Android/.idea/
+Android/build/
+Android/app/build/
+Android/local.properties
