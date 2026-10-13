@@ -25,7 +25,7 @@ The extension therefore delegates all key geometry, sizing, number/symbol pages,
 ## Test on an iPhone
 
 1. Open `Finglish.xcodeproj` in Xcode 26 or newer. Sign in to Xcode with the Apple Developer account that owns the app identifiers, if needed.
-2. The app and keyboard targets load the Team ID from the ignored `Signing.local.xcconfig`; you should not need to choose a team in the project or save one into `project.pbxproj`. Keep the App Groups capability enabled for `group.com.finglish.ios` on both the app and keyboard targets.
+2. The app target uses bundle identifier `com.mehrashojjat.finglish` and the keyboard extension uses `com.mehrashojjat.finglish.keyboard`. They load the Team ID from the ignored `Signing.local.xcconfig`; you should not need to choose a team in the project or save one into `project.pbxproj`. Keep the existing App Groups capability `group.com.finglish.ios` enabled on both targets; it is intentionally separate from the bundle identifiers so shared settings and engine data remain available.
 3. Select your connected iPhone as the run destination and run the `Finglish` scheme.
 4. In the app, open the keyboard settings instructions. On the phone go to **Settings → General → Keyboard → Keyboards → Add New Keyboard → Finglish**.
 5. Turn on **Allow Full Access**. The keyboard does not use the network; full access is required only so the extension can share its offline engine, settings, and learned choices with the settings app through the App Group container.

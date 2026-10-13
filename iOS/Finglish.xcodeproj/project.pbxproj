@@ -368,7 +368,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finglish.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish;
 				PRODUCT_NAME = Finglish;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -396,7 +396,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finglish.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish;
 				PRODUCT_NAME = Finglish;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -421,7 +421,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finglish.ios.keyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish.keyboard;
 				PRODUCT_NAME = FinglishKeyboard;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -447,7 +447,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finglish.ios.keyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish.keyboard;
 				PRODUCT_NAME = FinglishKeyboard;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;

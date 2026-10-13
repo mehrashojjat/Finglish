@@ -178,7 +178,7 @@ private final class FinglishActionHandler: KeyboardAction.StandardActionHandler 
         guard let controller = finglishController else { return }
 
         switch action {
-        case .character(let text), .text(let text):
+        case .character(let text), .characterMargin(let text), .text(let text):
             for character in text {
                 controller.handleKeyboardKey(.char(character))
             }
@@ -199,7 +199,7 @@ private final class FinglishActionHandler: KeyboardAction.StandardActionHandler 
 
     override func handle(_ gesture: Keyboard.Gesture, on action: KeyboardAction) {
         switch action {
-        case .character, .text, .space, .primary, .escape:
+        case .character, .characterMargin, .text, .space, .primary, .escape:
             if gesture == .press && action != .space {
                 tryTriggerFeedback(for: gesture, on: action)
             }
