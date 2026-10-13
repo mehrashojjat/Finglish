@@ -50,12 +50,35 @@ final class KeyboardViewController: KeyboardInputViewController, SessionClient {
             return KeyboardKit.KeyboardView(
                 state: controller.state,
                 services: controller.services,
-                buttonContent: { $0.view },
+                buttonContent: { params in
+                    FinglishKeyboardButtonContent(
+                        action: params.item.action,
+                        standard: params.view
+                    )
+                },
                 buttonView: { $0.view },
                 collapsedView: { $0.view },
                 emojiKeyboard: { $0.view },
                 toolbar: { _ in FinglishSuggestionBar(model: owner.suggestionModel) }
             )
+            .keyboardButtonStyle { params in
+                var style = params.standardStyle(for: controller.state.keyboardContext)
+
+                // KeyboardKit treats Shift as a system action and gives it a
+                // dark idle background. Finglish's keyboard uses the same
+                // light key treatment for Shift as for character keys.
+                if case .shift = params.action {
+                    let characterStyle = KeyboardAction.character("a")
+                        .standardButtonStyle(
+                            for: controller.state.keyboardContext,
+                            isPressed: params.isPressed
+                        )
+                    style.backgroundColor = characterStyle.backgroundColor
+                    style.foregroundColor = characterStyle.foregroundColor
+                }
+
+                return style
+            }
         }
     }
 
@@ -67,6 +90,13 @@ final class KeyboardViewController: KeyboardInputViewController, SessionClient {
     private func useEnglishKeyboardLocale() {
         state.keyboardContext.locale = .english_us
         state.keyboardContext.locales = [.english_us]
+
+        // The visual layout is Latin QWERTY, but this is still a Farsi
+        // keyboard from iOS's point of view. KeyboardKit normally derives
+        // primaryLanguage from locale, so restore the extension identity
+        // after selecting the visual locale.
+        state.keyboardContext.primaryLanguage = "fa"
+        primaryLanguage = "fa"
     }
 
     // MARK: Session input bridge

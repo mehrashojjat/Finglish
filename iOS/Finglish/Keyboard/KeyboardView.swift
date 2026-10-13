@@ -1,4 +1,28 @@
+import KeyboardKit
 import SwiftUI
+
+/// Replaces KeyboardKit's localized "Space" title with the keyboard's own
+/// language/identity label while keeping the standard button interaction.
+struct FinglishKeyboardButtonContent: View {
+    let action: KeyboardAction
+    let standard: Keyboard.ButtonContent
+
+    var body: some View {
+        if action == .space {
+            ZStack(alignment: .bottomTrailing) {
+                Color.clear
+
+                Text("فینگلیش")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundColor(Color(uiColor: .secondaryLabel).opacity(0.72))
+                    .padding(.trailing, 7)
+                    .padding(.bottom, 3)
+            }
+        } else {
+            standard
+        }
+    }
+}
 
 final class FinglishSuggestionModel: ObservableObject {
     @Published private(set) var candidate: CandidateModel?
