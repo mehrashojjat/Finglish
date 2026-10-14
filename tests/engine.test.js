@@ -87,8 +87,23 @@ test('learning: a chosen candidate is promoted', () => {
   const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
   const before = e2.candidates('sakhte', { max: 5 }).map(c => c.text);
   const target = before[1];
-  for (let i = 0; i < 3; i++) e2.learn('sakhte', target);
+  e2.learn('sakhte', target);
   assert.strictEqual(e2.candidates('sakhte', { max: 5 })[0].text, target);
+});
+
+test('learning: one deliberate third-row choice is promoted', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
+  const before = e2.candidates('salam', { max: 5 }).map(c => c.text);
+  const target = before[2];
+  e2.learn('salam', target);
+  assert.strictEqual(e2.candidates('salam', { max: 5 })[0].text, target);
+});
+
+test('small-host literal fallback keeps an unknown spelling visible', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'), { oov: false, morph: false, literalFallback: true });
+  const rows = e2.candidates('qwerty', { max: 3 });
+  assert.strictEqual(rows[rows.length - 1].kind, 'literal');
+  assert.strictEqual(rows[rows.length - 1].text, 'قورتی');
 });
 
 test('char LM: real words are likelier than random letters', () => {

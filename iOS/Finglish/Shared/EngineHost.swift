@@ -52,8 +52,10 @@ final class EngineHost: EngineProviding {
             let settings = SharedStore.loadSettings()
             // Keyboard extensions have a much smaller memory budget than the containing app.
             // Keep the same channel and ranked lexicon path, but leave the heavyweight
-            // macOS/web OOV, morphology and previous-word models out of this process.
-            let options = "{\"zwnj\":\"\(settings.zwnj)\",\"oov\":false,\"morph\":false,\"ctxWeight\":0}"
+            // Keep the compact keyboard profile free of the heavier macOS/web
+            // OOV and morphology models, but always reserve the final visible
+            // row for an exact Persian letter-by-letter spelling when needed.
+            let options = "{\"zwnj\":\"\(settings.zwnj)\",\"oov\":false,\"morph\":false,\"ctxWeight\":0,\"literalFallback\":true}"
             _ = host.invokeMethod("init", withArguments: [read("lexicon.tsv"), "", read("aliases.tsv"), options])
             _ = host.invokeMethod("importUserData", withArguments: [SharedStore.loadLearned()])
             JSGarbageCollect(js.jsGlobalContextRef)

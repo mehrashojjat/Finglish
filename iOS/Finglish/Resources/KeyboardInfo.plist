@@ -26,8 +26,6 @@
 			<false/>
 			<key>PrimaryLanguage</key>
 			<string>fa</string>
-			<key>RequestsOpenAccess</key>
-			<true/>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.keyboard-service</string>

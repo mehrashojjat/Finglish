@@ -77,4 +77,5 @@ enum SharedStore {
         defaults.removeObject(forKey: learnedKey)
         defaults.synchronize()
     }
+
 }

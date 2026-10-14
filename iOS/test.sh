@@ -28,7 +28,7 @@ done
 
 echo "PASS iOS plist validation"
 
-if rg -n 'DEVELOPMENT_TEAM = [A-Za-z0-9]' \
+if grep -E -n 'DEVELOPMENT_TEAM = [A-Za-z0-9]' \
   "$root/iOS/Finglish.xcodeproj/project.pbxproj" >/dev/null; then
   echo "FAIL iOS project contains a literal DEVELOPMENT_TEAM; keep it in Signing.local.xcconfig" >&2
   exit 1

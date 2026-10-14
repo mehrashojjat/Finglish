@@ -34,6 +34,7 @@ const DEFAULTS = {
   morph: true,          // base word + clitic candidates for unseen inflected forms
   morphRho: 0.1,        // prior mass of the morphological generator (vs the char-LM's rho)
   letters: true,        // a lone key (s, h, sh…) lists the letter itself first; every input ends with its letter-by-letter spelling (letters.js)
+  literalFallback: false, // small hosts may reserve one visible row for the exact Persian letter-by-letter spelling
 };
 
 const lse = (a, b) => (a > b ? a + Math.log1p(Math.exp(b - a)) : b + Math.log1p(Math.exp(a - b)));
@@ -216,7 +217,11 @@ class Engine {
     }
     if (this.user.size) for (const e of c) {
       const u = this.user.get(x + '|' + stripZwnj(e.text));
-      if (u) e.score += 1.5 * Math.log1p(u);
+      // A deliberate candidate tap should be meaningful immediately. The old
+      // 1.5*ln(1+count) bonus needed several repetitions before common
+      // alternatives could overtake the default, which made learning look
+      // broken on small hosts that show only three rows.
+      if (u) e.score += 4.0 + 1.5 * Math.log1p(u - 1);
     }
     // exact shortcuts always rank first: the user's own, then the built-in ones
     const al = [];
@@ -265,7 +270,7 @@ class Engine {
     const lit = literalSpelling(x);
     if (lit && !res.some(c => c.text === lit)) {
       if (res.length < max) res = res.concat(mk(lit, low - 1, 'literal'));
-      else if (max >= 10) res = res.slice(0, max - 1).concat(mk(lit, low - 1, 'literal'));     // only the tail of a long list (the apps ask for 18); a short list is never trimmed
+      else if (max >= 10 || this.opt.literalFallback) res = res.slice(0, max - 1).concat(mk(lit, low - 1, 'literal'));
     }
     return res;
   }

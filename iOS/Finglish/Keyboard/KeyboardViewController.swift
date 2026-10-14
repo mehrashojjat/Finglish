@@ -145,15 +145,6 @@ final class KeyboardViewController: KeyboardInputViewController, SessionClient {
         suggestionModel.update(model)
     }
 
-    override func textWillChange(_ textInput: UITextInput?) {
-        super.textWillChange(textInput)
-        session.settings = SharedStore.loadSettings()
-    }
-
-    override func textDidChange(_ textInput: UITextInput?) {
-        super.textDidChange(textInput)
-        session.settings = SharedStore.loadSettings()
-    }
 }
 
 private final class FinglishActionHandler: KeyboardAction.StandardActionHandler {

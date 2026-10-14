@@ -1,30 +1,13 @@
 import SwiftUI
 import UIKit
 
-enum KeyboardStatus: Equatable {
-    case enabled
-    case needsSetup
-
-    var title: String {
-        switch self {
-        case .enabled: return "صفحه‌کلید فینگلیش در فهرست صفحه‌کلیدهاست"
-        case .needsSetup: return "صفحه‌کلید فینگلیش هنوز به فهرست اضافه نشده است"
-        }
-    }
-
-    var icon: String { self == .enabled ? "checkmark.circle.fill" : "exclamationmark.circle.fill" }
-    var color: Color { self == .enabled ? .green : .orange }
-}
-
 @MainActor
 final class SettingsModel: ObservableObject {
     @Published var settings: Settings
     @Published var testText = ""
-    @Published var status: KeyboardStatus = .needsSetup
 
     init() {
         settings = SharedStore.loadSettings()
-        refreshStatus()
     }
 
     func save() {
@@ -33,41 +16,27 @@ final class SettingsModel: ObservableObject {
         SharedStore.saveSettings(settings)
     }
 
-    func refreshStatus() {
-        // iOS exposes the primary language of active input modes, not a stable third-party bundle identifier.
-        let active = UITextInputMode.activeInputModes
-        status = active.contains { mode in
-            mode.primaryLanguage == "fa"
-        } ? .enabled : .needsSetup
-    }
 }
 
 struct ContentView: View {
     @StateObject private var model = SettingsModel()
-    @Environment(\.scenePhase) private var scenePhase
 
-    private var keyboardSettingsURL: URL {
-        URL(string: "App-prefs:root=General&path=Keyboard/KEYBOARDS")!
+    private func openSettings() {
+        guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(settingsURL)
     }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    HStack(spacing: 12) {
-                        Image(systemName: model.status.icon)
-                            .font(.title2)
-                            .foregroundStyle(model.status.color)
-                        Text(model.status.title)
-                            .font(.headline)
-                        Spacer()
-                    }
+                    Label("تنظیم صفحه‌کلید توسط iOS مدیریت می‌شود", systemImage: "info.circle")
 
                     Button("باز کردن تنظیمات صفحه‌کلید") {
-                        UIApplication.shared.open(keyboardSettingsURL)
+                        openSettings()
                     }
 
-                    Text("مسیر: Settings → General → Keyboard → Keyboards → Add New Keyboard → Finglish. سپس Allow Full Access را روشن کنید تا برنامه و افزونه بتوانند تنظیمات و موتور آفلاین را از طریق App Group مشترک بخوانند.")
+                    Text("برای افزودن یا حذف Finglish: Settings → General → Keyboard → Keyboards. Finglish کاملاً آفلاین است و از اینترنت یا دادهٔ تلفن همراه استفاده نمی‌کند.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
@@ -76,11 +45,12 @@ struct ContentView: View {
 
                 Section("آزمایش مستقیم") {
                     TextField("مثلاً salam", text: $model.testText)
-                        .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
-                        .textContentType(.none)
-                        .environment(\.layoutDirection, .leftToRight)
+
+                    Text("اگر Finglish در فهرست صفحه‌کلیدها اضافه شده، با دکمهٔ کره آن را انتخاب کنید. اگر اضافه نشده، از دکمهٔ تنظیمات بالا استفاده کنید.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
 
                     HStack {
                         Text("اینجا بنویسید و Space بزنید تا پیشنهادهای فینگلیش را امتحان کنید.")
@@ -130,7 +100,7 @@ struct ContentView: View {
 
                 Section("حریم خصوصی") {
                     Label("تبدیل و پیشنهادها کاملاً روی خود آیفون انجام می‌شوند.", systemImage: "lock.shield")
-                    Text("این پروژه برای کار کردن به اینترنت نیاز ندارد و متن تایپ‌شده را ارسال نمی‌کند. Allow Full Access فقط برای اشتراک App Group بین برنامه و افزونه لازم است.")
+                    Text("این پروژه برای کار کردن به اینترنت نیاز ندارد و متن تایپ‌شده را به سروری ارسال نمی‌کند؛ تمام پردازش‌ها کاملاً آفلاین روی دستگاه انجام می‌شوند.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -154,12 +124,6 @@ struct ContentView: View {
             }
             .navigationTitle("تنظیمات فینگلیش")
             .environment(\.layoutDirection, .rightToLeft)
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                model.settings = SharedStore.loadSettings()
-                model.refreshStatus()
-            }
         }
     }
 
