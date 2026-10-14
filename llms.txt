@@ -14,6 +14,8 @@ Key facts:
 ## Pages
 - [Finglish — Persian page](https://finglish.mehrashojjat.com/): the tool and its explanation in Persian (فارسی)
 - [Finglish — English page](https://finglish.mehrashojjat.com/en/): the same tool, explained in English
+- [Privacy policy — Persian](https://finglish.mehrashojjat.com/privacy/): privacy information in Persian
+- [Privacy policy — English](https://finglish.mehrashojjat.com/en/privacy/): privacy information in English
 - [macOS keyboard (DMG)](https://finglish.mehrashojjat.com/downloads/Finglish.dmg): the Finglish keyboard for macOS 26+, signed and notarized
 - [Source code (GitHub)](https://github.com/mehrashojjat/Finglish): the full source of the website, the engine and the Mac keyboard, AGPL-3.0-only
 

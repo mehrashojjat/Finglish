@@ -27,7 +27,7 @@ const e1 = engineFiles.flatMap(f => strip(fs.readFileSync(f, 'utf8')).split('\n'
 ok(e1.length === 0, `engine/src (${engineFiles.length} files): no network API, no URL, only relative requires`, e1);
 
 // Rule 2
-const siteFiles = [path.join(ROOT, 'index.html'), path.join(ROOT, 'en/index.html'), path.join(ROOT, '404.html'), ...walk(path.join(ROOT, 'assets'))];
+const siteFiles = [path.join(ROOT, 'index.html'), path.join(ROOT, 'en/index.html'), path.join(ROOT, 'privacy/index.html'), path.join(ROOT, 'en/privacy/index.html'), path.join(ROOT, '404.html'), ...walk(path.join(ROOT, 'assets'))];
 const pageJs = siteFiles.filter(f => /\.(js|html)$/.test(f) && !/assets\/data\//.test(f) && !/assets\/vendor\//.test(f));
 const hits = pageJs.flatMap(f => strip(fs.readFileSync(f, 'utf8')).split('\n').map((l, i) => [rel(f), i + 1, l.trim().slice(0, 90)]).filter(([, , l]) => NET.test(l)));
 ok(hits.length === 0, `website (${pageJs.length} js/html files): no network API anywhere`, hits);

@@ -22,7 +22,7 @@ const enHtml = read(PAGES.en);
 
 test('the pages are at the repository root and everything they load exists', () => {
   assert.ok(!fs.existsSync(path.join(ROOT, 'app')), 'the old app/ folder must be gone: the root is the website');
-  for (const file of [...Object.values(PAGES), '404.html']) {
+  for (const file of [...Object.values(PAGES), 'privacy/index.html', 'en/privacy/index.html', '404.html']) {
     const dir = path.dirname(file), text = read(file);
     const refs = [...text.matchAll(/\b(?:src|href)="([^"#?]+)"/g)].map(m => m[1]).filter(u => !/^(https?:|mailto:|data:|\/\/)/.test(u));
     assert.ok(refs.length >= 5, `expected ${file} to reference its css, scripts and logo: ${refs.length}`);
@@ -72,6 +72,21 @@ test('the footer carries the copyright and the licence, on the website and in th
   assert.ok(/Link\(AboutInfo\.licenseName/.test(read('mac/Sources/Settings/SettingsView.swift')), 'the Mac settings window must show the footer');
   assert.ok(/LICENSE/.test(read('mac/build.sh')), 'the Mac build must put LICENSE inside the app');
   assert.ok(!/قلم/.test(html.replace(/<script[\s\S]*?<\/script>/g, '')), 'the word for a typeface is «فونت», not «قلم»');
+});
+
+test('the bilingual privacy policy is linked from both footers and included in the sitemap', () => {
+  const fa = read('privacy/index.html'), en = read('en/privacy/index.html');
+  assert.ok(/<html lang="fa" dir="rtl">/.test(fa) && /حریم خصوصی فینگلیش/.test(fa));
+  assert.ok(/<html lang="en" dir="ltr">/.test(en) && /Finglish Privacy Policy/.test(en));
+  assert.ok(/href="privacy\/"[^>]*>حریم خصوصی/.test(html));
+  assert.ok(/href="privacy\/"[^>]*>Privacy/.test(enHtml));
+  assert.ok(fa.includes('https://finglish.mehrashojjat.com/privacy/') && fa.includes('https://finglish.mehrashojjat.com/en/privacy/'));
+  assert.ok(en.includes('https://finglish.mehrashojjat.com/privacy/') && en.includes('https://finglish.mehrashojjat.com/en/privacy/'));
+  assert.match(fa, /localStorage/); assert.match(en, /local storage/);
+  assert.match(fa, /Cloudflare Pages/); assert.match(en, /Cloudflare Pages/);
+  const sitemap = read('sitemap.xml');
+  assert.ok(sitemap.includes('<loc>https://finglish.mehrashojjat.com/privacy/</loc>'));
+  assert.ok(sitemap.includes('<loc>https://finglish.mehrashojjat.com/en/privacy/</loc>'));
 });
 
 test('the website and the Mac app link to the source code (AGPL) and the Mac app links to the website', () => {

@@ -183,6 +183,16 @@ html[dir="rtl"] .dl-name { text-align: right; }
 .foot p { margin: 0; }
 .foot a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .foot a:hover { color: var(--accent); }
+.privacy-main { display: block; }
+.privacy-card { padding: 20px 22px; }
+.privacy-card h1 { margin: 0 0 6px; font-size: 26px; line-height: 1.4; }
+.privacy-card h2 { margin: 22px 0 5px; color: var(--ink); font-size: 18px; letter-spacing: 0; text-transform: none; }
+.privacy-card p { margin: 0 0 10px; }
+.privacy-card ul { margin: 4px 0 14px; padding-inline-start: 1.4em; }
+.privacy-card a { color: var(--accent); overflow-wrap: anywhere; }
+.privacy-meta { color: var(--muted); font-size: 13px; }
+.privacy-language { margin-inline-start: auto; white-space: nowrap; }
+.privacy-language a { color: var(--accent); }
 
 /* the one thing the page says about loading: a failure */
 .boot-error { margin: 0; padding: 10px 14px; color: var(--err); font-size: 13px; }

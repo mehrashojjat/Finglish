@@ -28,6 +28,7 @@ if (base && !base.endsWith('/')) base += '/';
 if (base) new URL(base);                                       // throws on a malformed address
 const today = new Date().toISOString().slice(0, 10);
 const PAGES = [{ file: 'index.html', lang: 'fa', url: base }, { file: 'en/index.html', lang: 'en', url: base && base + 'en/' }];
+const PRIVACY = [{ lang: 'fa', url: base && base + 'privacy/' }, { lang: 'en', url: base && base + 'en/privacy/' }];
 const AI_AGENTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended',
   'Applebot-Extended', 'CCBot', 'Meta-ExternalAgent', 'Amazonbot', 'DuckAssistBot', 'MistralAI-User', 'cohere-ai'];
 const esc = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -89,12 +90,12 @@ out.set('robots.txt', [
 // ---- sitemap.xml (needs absolute URLs, so only with an address)
 out.set('sitemap.xml', base ? `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${PAGES.map(p => `  <url>
+${[...PAGES, ...PRIVACY].map((p, i) => `  <url>
     <loc>${p.url}</loc>
     <lastmod>${today}</lastmod>
-    <xhtml:link rel="alternate" hreflang="fa" href="${PAGES[0].url}"/>
-    <xhtml:link rel="alternate" hreflang="en" href="${PAGES[1].url}"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="${PAGES[0].url}"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="${i < 2 ? PAGES[0].url : PRIVACY[0].url}"/>
+    <xhtml:link rel="alternate" hreflang="en" href="${i < 2 ? PAGES[1].url : PRIVACY[1].url}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${i < 2 ? PAGES[0].url : PRIVACY[0].url}"/>
   </url>`).join('\n')}
 </urlset>
 ` : '');
@@ -118,6 +119,8 @@ Key facts:
 ## Pages
 ${link('Finglish — Persian page', PAGES[0].url, 'the tool and its explanation in Persian (فارسی)')}
 ${link('Finglish — English page', PAGES[1].url, 'the same tool, explained in English')}
+${link('Privacy policy — Persian', PRIVACY[0].url, 'privacy information in Persian')}
+${link('Privacy policy — English', PRIVACY[1].url, 'privacy information in English')}
 ${link('macOS keyboard (DMG)', base + 'downloads/Finglish.dmg', 'the Finglish keyboard for macOS 26+, signed and notarized')}
 - [Source code (GitHub)](https://github.com/mehrashojjat/Finglish): the full source of the website, the engine and the Mac keyboard, AGPL-3.0-only
 ${base ? '' : '(Absolute links are added once the site address is known: node tools/seo.js <address>.)\n'}
