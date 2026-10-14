@@ -1,15 +1,15 @@
 {
- "built": "2026-10-14T13:32:08.804Z",
+ "built": "2026-10-14T14:42:29.072Z",
  "hostApi": "FarsiIME.host (string in / string out; see engine/src/host.js)",
  "lexiconWords": 292057,
  "bytes": {
-  "farsi-ime-engine.js": 64035,
+  "farsi-ime-engine.js": 68418,
   "lexicon.tsv": 7161476,
   "bigrams.tsv": 2987545,
   "aliases.tsv": 2996
  },
  "sha256": {
-  "farsi-ime-engine.js": "d238a19f1223af00b59f422e249498d4e4d4421bb0ba109ea3a540bf52c6159d",
+  "farsi-ime-engine.js": "c3f4ce6209d830b6096405b67135fc4687418fd977af11e9feb2af379378cce0",
   "lexicon.tsv": "9330c5f034caee0703843a923ae358851d94fbd019b5b5c3b8b1beb3b658e71d",
   "bigrams.tsv": "743de94d1d4d19ac00dbfcc9fb0f60d87d17f91e650826ebdbafa4b8dd0f5823",
   "aliases.tsv": "9bc9a5208793ed22c2d24ed01a4461d63e7933fd8b156347455e49ce14092c7d"

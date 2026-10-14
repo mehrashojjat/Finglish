@@ -9,6 +9,7 @@ const { createChannel } = require('../engine/src/channel');
 const { inputVariants, phoneticVariants } = require('../engine/src/skeleton');
 const { normalizeLatin } = require('../engine/src/normalize');
 const { CharLM } = require('../engine/src/charlm');
+const { shortVowelSpelling } = require('../engine/src/letters');
 
 const ROOT = path.join(__dirname, '..');
 const eng = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
@@ -22,6 +23,11 @@ test('normalizeLatin', () => {
   assert.strictEqual(normalizeLatin('Khoooobi!'), 'khoobi');
   assert.strictEqual(normalizeLatin("Ta’sir"), "ta'sir");
   assert.strictEqual(normalizeLatin('  SALAM '), 'salam');
+});
+
+test('short-vowel spelling preserves original digraph boundaries', () => {
+  assert.strictEqual(shortVowelSpelling('zahr'), 'زهر');
+  assert.strictEqual(shortVowelSpelling('shokr'), 'شکر');
 });
 
 test('skeleton variants: digraphs, optional h, tanvin, x=ks', () => {
@@ -51,6 +57,25 @@ test('golden top-1: common Finglish', () => {
     computer: 'کامپیوتر', sara: 'سارا', ketab: 'کتاب', khodahafez: 'خداحافظ', lotfan: 'لطفا', avval: 'اول', bayad: 'باید',
     bebakhshid: 'ببخشید', khane: 'خونه', emrooz: 'امروز', tehran: 'تهران', iran: 'ایران', mohandesi: 'مهندسی', salamat: 'سلامت' };
   for (const [k, v] of Object.entries(gold)) assert.strictEqual(top(k).replace(/خانه/, 'خونه'), v.replace(/خانه/, 'خونه'), k);
+});
+
+test('sparse short vowels prefer the phonetic short-vowel form', () => {
+  assert.strictEqual(top('zahr'), 'زهر');
+  assert.ok(list('zahr', 5).includes('ظاهر'));
+  assert.strictEqual(top('zohr'), 'ظهر');
+});
+
+test('ambiguous vowel patterns keep distinct tops in full and compact profiles', () => {
+  const compact = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'iOS/Finglish/Resources/Engine/lexicon.tsv'), 'utf8'), {
+    oov: false, morph: false, ctxWeight: 0, literalFallback: true,
+  });
+  const expected = { zahr: 'زهر', zohre: 'زهره', zaher: 'ظاهر' };
+  for (const [latin, persian] of Object.entries(expected)) {
+    assert.strictEqual(top(latin), persian, `full/${latin}`);
+    // iOS requests three rows; literalFallback reserves the final row only
+    // when there is room and must never replace the top suggestion.
+    assert.strictEqual(compact.candidates(latin, { max: 3 })[0].text, persian, `compact/${latin}`);
+  }
 });
 
 test('pronunciation hints separate عشق / عاشق (ashegh vs eshgh)', () => {
@@ -108,6 +133,14 @@ test('learning: the same Persian choice transfers across Finglish spellings', ()
   const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
   e2.learn('shork', 'شوکر');
   assert.strictEqual(e2.candidates('shokr', { max: 5 })[0].text, 'شوکر');
+});
+
+test('learning does not erase explicit vowel distinctions between spellings', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
+  e2.learn('zahr', 'زهر');
+  assert.strictEqual(e2.candidates('zahr', { max: 1 })[0].text, 'زهر');
+  assert.strictEqual(e2.candidates('zohre', { max: 1 })[0].text, 'زهره');
+  assert.strictEqual(e2.candidates('zaher', { max: 1 })[0].text, 'ظاهر');
 });
 
 test('learning: an exact tapped spelling wins even when it was the generated row', () => {

@@ -5,7 +5,8 @@ type Latin letters (`salam`) and a drop-down of Persian words appears under the 
 It uses the same engine, lexicon and rules as the website (`engine/dist/`), runs fully offline, and needs macOS 26 or newer (Apple silicon and Intel).
 
 ## Install — for users: a disk image
-`npm run mac:dmg` (or `mac/make_dmg.sh`) builds **`mac/dist/Finglish-1.0.0.dmg`** (3 MB, universal Apple silicon + Intel, macOS 26+) and, next to it,
+`npm run mac:dmg` builds **`mac/dist/Finglish-1.0.0.dmg`** (3 MB, universal Apple silicon + Intel, macOS 26+) and also publishes the same image as
+**`downloads/Finglish.dmg`**, the file served by the website's Download button. Running `mac/make_dmg.sh` directly builds only the local `dist` copy unless `--publish` is supplied. Next to the local image it also creates
 **`mac/dist/Finglish Settings.app`** — the same app, ready to copy into Applications to try it. The image holds exactly two things — the app and an *Applications* shortcut (drag and drop); nothing else, no read-me file.
 No package, no installer, no third-party tool — just `hdiutil`. The script checks the finished image itself (verify, mount, structure, signatures, both architectures, app and keyboard from the same build).
 
@@ -24,7 +25,7 @@ No package, no installer, no third-party tool — just `hdiutil`. The script che
 It is switched on by `FINGLISH_SIGN_IDENTITY` (the certificate's SHA-1 hash) and `FINGLISH_NOTARY_PROFILE` (a profile made once with `xcrun notarytool store-credentials`), set in the environment or in the untracked `mac/signing.local.env`; nothing secret is in the repository. Without them the build is signed ad hoc, which is fine for development (a downloaded ad-hoc build would need Privacy & Security → Open Anyway).
 
 ### Releasing — what the website's download button serves
-`npm run mac:release` (= `mac/make_dmg.sh --publish`) builds the image as above, then copies it to **`../downloads/Finglish.dmg`** (the one file the website links to; older images there are removed) and writes the version into the website's download dialog
+`npm run mac:dmg` (or `npm run mac:release`) builds the image as above, then copies it to **`../downloads/Finglish.dmg`** (the one file the website links to; older images there are removed) and writes the version into the website's download dialog
 (`index.html`: the visible version, next to the `download="Finglish.dmg"` file name). The version comes from `VERSION` in `build.sh`; `package.json` must carry the same number — `npm test` (`tests/site.test.js`) fails when the image, the link or the versions disagree.
 The AGPL-3.0 text (`../LICENSE`) is copied into the app (`Contents/Resources/LICENSE`) and the image build fails without it; the settings window ends with the same centred line as the website: «© ۲۰۲۶ مهراس حجت · مجوز AGPL-3.0».
 The screenshots the guide was made from are kept in `tools/guide-sources/` (`Originals/`, `Edited/`).
@@ -41,7 +42,7 @@ The app only registers the keyboard; the user's own *Add* + *Done* in System Set
 ```bash
 npm run mac:install          # or: mac/install.sh
 ```
-Builds if needed (about a minute the first time), puts the app in `/Applications` (`~/Applications` if that is not writable), and runs `FinglishSettings --install` — the same code the first launch runs, without a window.
+Always performs a fresh engine/app build, creates and validates a new `mac/dist/Finglish-1.0.0.dmg`, publishes the byte-identical `downloads/Finglish.dmg`, then puts that same build in `/Applications` (`~/Applications` if that is not writable) and runs `FinglishSettings --install` — the same code the first launch runs, without a window. No timestamp is manufactured; the build and disk-image tools create the new file.
 It prints the one manual step and does not open System Settings. Updating later (after tuning the engine): run it again — no log-out, the new version starts the next time you switch to the keyboard.
 Remove: `npm run mac:uninstall` (add `-- --purge` to also delete settings and learned choices). Headless modes of the app: `--install`, `--status`, `--register`, `--unregister`.
 
@@ -96,7 +97,7 @@ mac/Resources/                       Info.plists (structure copied from Apple's 
                                      (the icons draw assets/img/logo.svg: Vazirmatn Bold ف outlined by tools/make_logo.swift — same file as the website's logo)
 engine/dist/                         the SAME engine package as the website — copied into the keyboard's Resources at build time
 ```
-Tuning the algorithm or the data: edit `engine/` or `data/`, then `npm run mac:install` (it re-bundles the engine and rebuilds). One engine, two consumers.
+Tuning the algorithm or the data: edit `engine/` or `data/`, then `npm run mac:install` (it re-bundles the engine, rebuilds the apps, creates a fresh DMG, publishes it, and installs the same build). One engine, two consumers.
 Changing *typing behaviour* (keys, window) is done in `Session.swift` here **and** `assets/js/ime.js` for the website.
 
 ## What was tested, and what was not

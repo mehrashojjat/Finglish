@@ -74,4 +74,18 @@ function literalSpelling(x) {
   return out;
 }
 
-module.exports = { LETTERS, letterAlternatives, literalSpelling };
+/** Remove written short vowels without allowing the removal to create a new
+ * digraph: zahr -> زهر, not ژر (the original z and h were separated by a). */
+function shortVowelSpelling(x) {
+  let out = '';
+  for (let i = 0; i < x.length;) {
+    const two = x.slice(i, i + 2);
+    if (DIGRAPHS[two]) { out += DIGRAPHS[two]; i += 2; continue; }
+    const ch = x[i++];
+    if ('aeiou'.includes(ch)) continue;
+    if (LETTERS[ch]) out += LETTERS[ch][0];
+  }
+  return out;
+}
+
+module.exports = { LETTERS, letterAlternatives, literalSpelling, shortVowelSpelling };

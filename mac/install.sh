@@ -1,10 +1,14 @@
 #!/bin/bash
-# Install for the current user the way a user does: put the app in Applications and open it once.   mac/install.sh
+# Build a fresh release image, publish it, then install the exact app from that build for the current user.   mac/install.sh
 #   /Applications/Finglish Settings.app      (in ~/Applications instead if /Applications is not writable)
 #   ~/Library/Input Methods/Finglish.app     the keyboard — copied out of the app and added to your keyboards by the app itself (--install)
 set -euo pipefail
 cd "$(dirname "$0")"
-[ -d "build/app/Finglish Settings.app" ] || ./build.sh
+# This command is intentionally a rebuild command.  The old existence check reused a stale
+# build/app directory, so editing the engine and running npm run mac:install could install
+# yesterday's app and never create a new DMG.  make_dmg.sh rebuilds the apps, creates a new
+# image, validates it, and publishes the byte-identical copy used by the website.
+./make_dmg.sh --publish
 if [ -w /Applications ]; then APPS="/Applications"; else APPS="$HOME/Applications"; mkdir -p "$APPS"; fi
 pkill -x FinglishSettings 2>/dev/null || true      # a Settings window left open would keep showing the OLD version
 sleep 0.3

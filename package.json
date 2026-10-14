@@ -27,7 +27,7 @@
     "mac:build": "mac/build.sh",
     "mac:test": "mac/test.sh",
     "mac:install": "mac/install.sh",
-    "mac:dmg": "mac/make_dmg.sh",
+    "mac:dmg": "mac/make_dmg.sh --publish",
     "mac:release": "mac/make_dmg.sh --publish",
     "mac:uninstall": "mac/uninstall.sh",
     "ios:test": "iOS/test.sh"

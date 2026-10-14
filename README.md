@@ -94,9 +94,10 @@ npm run cli -- --explain --max 5 salam mikham      # try the engine in the termi
 npm run seo -- <address>   # write the files that need the published address (canonical, sitemap…) — see docs/SEO.md
 npm run bundle         # rebuild engine/dist and assets/{vendor,data} after changing engine/ or data/   (npm start does it for you)
 npm run parity         # regenerate tests/golden/parity_vectors.jsonl after an intentional engine change (review with git diff)
-npm run mac:test       # the Mac keyboard's tests (needs Xcode)       npm run mac:install   # install it for yourself
+npm run mac:test       # the Mac keyboard's tests (needs Xcode)
+npm run mac:install    # fresh-build + DMG + publish + install
 npm run ios:test       # iOS session tests + plist validation (Xcode toolchain)
-npm run mac:release    # build the DMG and publish it to downloads/ (see mac/README.md)
+npm run mac:dmg        # build the DMG and publish it to downloads/ (see mac/README.md)
 ```
 
 Browser tests default to the file on disk; to test the served site: `APP_URL=http://localhost:8080/ npm run e2e` while `npm run serve` is running.

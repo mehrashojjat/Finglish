@@ -144,7 +144,10 @@ function vowelStyleFactor(x, P) {
   let nv = 0;
   for (let i = 0; i < x.length; i++) { const c = x.charCodeAt(i); if (c === 97 || c === 101 || c === 105 || c === 111 || c === 117) nv++; }
   if (nv === 0) return P.lazyOmit;
-  if (nv * 5 < x.length) return P.sparseOmit;
+  // Treat vowel density as a property of the whole spelling, not of a word
+  // or alias: one explicit vowel for every four typed characters is already
+  // sparse enough that omitted Persian vowel-letters are plausible.
+  if (nv * 4 <= x.length) return P.sparseOmit;
   return 1;
 }
 
@@ -268,7 +271,11 @@ function createChannel(userParams) {
           if (slotOK) {
             for (const [chunk, c0] of INSERT) {
               if (x.startsWith(chunk, i)) {
-                const c = base + c0 * P.insScale + (hint ? slotAdjust(hint, m, j, chunk) : 0);
+                // A sparse typed vowel is more likely a Persian short vowel
+                // that is not written than an explicit long-vowel letter.
+                // Make that interpretation cheaper for the insertion path as
+                // well as for omitted vowel letters (zahr -> زهر, not ظاهر).
+                const c = base + c0 * P.insScale * Math.min(1, omitF) + (hint ? slotAdjust(hint, m, j, chunk) : 0);
                 const t = j * W + i + chunk.length;
                 if (c < B[t]) { B[t] = c; if (trace) bpB[t] = [j * W + i, 'ins:' + chunk]; }
               }

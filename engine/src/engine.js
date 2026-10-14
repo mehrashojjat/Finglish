@@ -18,7 +18,7 @@ const { normalizeLatin, normalizePersian, stripZwnj } = require('./normalize');
 const { CharLM } = require('./charlm');
 const { createOOV } = require('./oov');
 const { SUFFIXES, attach } = require('./morph');
-const { letterAlternatives, literalSpelling } = require('./letters');
+const { letterAlternatives, literalSpelling, shortVowelSpelling } = require('./letters');
 
 const DEFAULTS = {
   lambda: 0.512,        // weight of the language-model prior against the channel
@@ -41,6 +41,56 @@ const DEFAULTS = {
 };
 
 const lse = (a, b) => (a > b ? a + Math.log1p(Math.exp(b - a)) : b + Math.log1p(Math.exp(a - b)));
+
+const SHORT_VOWELS = 'aeiou';
+const CONSONANT_DIGRAPHS = new Set(['sh', 'ch', 'kh', 'gh', 'zh']);
+
+/**
+ * Group only equivalent Latin spellings for cross-spelling learning. The
+ * consonants may move around a typed short vowel (shork/shokr), but the
+ * explicit vowel runs stay part of the key (zahr, zohre and zaher differ).
+ */
+function learningSignature(x) {
+  const vowels = (x.match(/[aeiou]+/g) || []).join('|');
+  const consonants = [];
+  for (let i = 0; i < x.length;) {
+    const pair = x.slice(i, i + 2);
+    if (CONSONANT_DIGRAPHS.has(pair)) { consonants.push(pair); i += 2; continue; }
+    if (!SHORT_VOWELS.includes(x[i])) consonants.push(x[i]);
+    i++;
+  }
+  return consonants.sort().join('') + '|' + vowels;
+}
+
+/**
+ * Describe the generic Finglish pattern where one internal typed vowel may be
+ * the short vowel between Persian consonants. Glides and apostrophes are
+ * excluded: they are meaningful vowel/consonant evidence, not an unwritten
+ * short-vowel marker.
+ */
+function shortVowelProfile(x) {
+  let vowelAt = -1;
+  for (let i = 0; i < x.length; i++) {
+    if (!SHORT_VOWELS.includes(x[i])) continue;
+    if (vowelAt >= 0) return null;
+    vowelAt = i;
+  }
+  if (vowelAt <= 0 || vowelAt >= x.length - 1 || /[wyv']/.test(x)) return null;
+  const left = x.slice(0, vowelAt), right = x.slice(vowelAt + 1);
+  if (!left || !right || /[^a-z]/.test(left + right)) return null;
+
+  const countUnits = source => {
+    let count = 0;
+    for (let i = 0; i < source.length;) {
+      const pair = source.slice(i, i + 2);
+      if (CONSONANT_DIGRAPHS.has(pair)) i += 2;
+      else { count++; i++; }
+    }
+    return count;
+  };
+  const consonantUnits = countUnits(left) + countUnits(right);
+  return { compact: consonantUnits === 2 };
+}
 
 class Engine {
   constructor(lexicon, options) {
@@ -228,10 +278,23 @@ class Engine {
     // part of a digraph and the exact letter fallback would lose ح/ه choice.
     const repeatedConsonant = /([bcdfgjklmnpqrstvwxyz])\1/.test(x);
     const shortConsonantOnly = x.length === 2 && !/[aeiou]/.test(x);
-    const shortVowelOnly = x.length <= 3 && (x.match(/[aeiou]/g) || []).length === 1;
+    const shortVowel = shortVowelProfile(x);
     const explicitForms = [];
     if (/(?:aa|ee|oo)/.test(x) || repeatedConsonant || shortConsonantOnly) explicitForms.push({ text: literal, force: repeatedConsonant || shortConsonantOnly });
-    if (shortVowelOnly) explicitForms.push({ text: literalSpelling(x.replace(/[aeiou]/g, '')), force: true });
+    if (shortVowel) {
+      // A single written vowel may be the short vowel between consonants.
+      // Prefer its unwritten-vowel spelling only when the channel itself says
+      // it is at least as close; this keeps zohr -> ظهر while allowing zahr
+      // -> زهر and shokr -> شکر.
+      explicitForms.push({
+        text: shortVowelSpelling(x),
+        // A compact CVC syllable has no room for an untyped long-vowel letter;
+        // for longer consonant frames, retain the normal cost/prior comparison.
+        force: shortVowel.compact,
+        shortVowel: true,
+        bonus: shortVowel.compact ? 3.0 : 0.5,
+      });
+    }
     for (const form of explicitForms) {
       if (!form.text) continue;
       const cost = this.channel.cost(form.text, x);
@@ -242,9 +305,15 @@ class Engine {
       // materially better aligned. This keeps normal forms such as
       // nemidoonam → نمیدونم, while respecting shookr → شوکر, kar → کر,
       // and mmd → ممد.
-      if (cost !== Infinity && (form.force || bestOtherCost - cost >= 0.6)) {
-        if (exact) exact.score += 3.0;
-        else c.push({ id: -1, text: form.text, cost, logp: -cost, score: -cost, kind: 'literal' });
+      // Existing lexicon entries may have pronunciation-hint adjustments in
+      // their stored candidate cost; compare against that same cost rather
+      // than recomputing the spelling without hints.
+      const alignedCost = exact ? exact.cost : cost;
+      const alignedShortVowel = form.shortVowel ? bestOtherCost >= alignedCost : false;
+      if (cost !== Infinity && (form.force || alignedShortVowel || bestOtherCost - cost >= 0.6)) {
+        const bonus = form.bonus === undefined ? 3.0 : form.bonus;
+        if (exact) exact.score += bonus;
+        else c.push({ id: -1, text: form.text, cost, logp: -cost, score: -cost + bonus, kind: 'literal' });
       }
     }
     // Finglish vowel placement is not consistent: a short vowel is often
@@ -277,13 +346,25 @@ class Engine {
       if (exact) exact.score += bonus;
       else c.push({ id: -1, text, cost, logp: -cost, score: -cost + bonus, kind: 'learned' });
     }
-    if (this.user.size) for (const e of c) {
-      const u = this.userText.get(stripZwnj(e.text)) || 0;
-      // A deliberate candidate tap should be meaningful immediately. The old
-      // 1.5*ln(1+count) bonus needed several repetitions before common
-      // alternatives could overtake the default, which made learning look
-      // broken on small hosts that show only three rows.
-      if (u) e.score += 4.0 + 1.5 * Math.log1p(u - 1);
+    // Transfer a deliberate choice only across equivalent Latin spellings.
+    // A global Persian-text bonus is unsafe: learning zahr -> زهر must not
+    // make zohre or zaher resolve to the same text. The exact-input bonus
+    // above still handles every spelling independently.
+    if (this.user.size) {
+      const signature = learningSignature(x);
+      for (const [key, count] of this.user) {
+        const split = String(key).indexOf('|');
+        if (split < 0) continue;
+        const learnedInput = String(key).slice(0, split);
+        if (learnedInput === x || learningSignature(learnedInput) !== signature) continue;
+        const text = String(key).slice(split + 1);
+        const cost = this.channel.cost(text, x);
+        if (cost === Infinity) continue;
+        const exact = c.find(e => stripZwnj(e.text) === text);
+        const bonus = 8.0 + 1.5 * Math.log1p(Math.max(0, (+count || 1) - 1));
+        if (exact) exact.score += bonus;
+        else c.push({ id: -1, text, cost, logp: -cost, score: -cost + bonus, kind: 'learned' });
+      }
     }
     // Persian can omit internal short vowels, but a word beginning with an
     // untyped vowel-like letter is a different phonetic onset. Keep that
