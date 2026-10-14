@@ -14,7 +14,7 @@ final class EngineHost: EngineProviding {
     private var host: JSValue?
     private var loading = false
     private var ready = false
-    private var saveWork: DispatchWorkItem?
+    private var learnedGeneration = 0
 
     var isReady: Bool {
         lock.lock(); defer { lock.unlock() }
@@ -51,7 +51,6 @@ final class EngineHost: EngineProviding {
 
             let settings = SharedStore.loadSettings()
             // Keyboard extensions have a much smaller memory budget than the containing app.
-            // Keep the same channel and ranked lexicon path, but leave the heavyweight
             // Keep the compact keyboard profile free of the heavier macOS/web
             // OOV and morphology models, but always reserve the final visible
             // row for an exact Persian letter-by-letter spelling when needed.
@@ -63,6 +62,7 @@ final class EngineHost: EngineProviding {
             self.lock.lock()
             self.context = js
             self.host = host
+            self.learnedGeneration = SharedStore.learnedGeneration
             self.ready = true
             self.loading = false
             self.lock.unlock()
@@ -74,6 +74,7 @@ final class EngineHost: EngineProviding {
         guard isReady else { return [] }
         return queue.sync {
             guard let host else { return [] }
+            syncLearnedIfNeeded(host)
             let json = host.invokeMethod("candidates", withArguments: [latin, prev, min(3, max)])?.toString() ?? "[]"
             guard let data = json.data(using: .utf8), let objects = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return [] }
             return objects.compactMap { object in
@@ -89,10 +90,10 @@ final class EngineHost: EngineProviding {
         queue.async { [weak self] in
             guard let self, let host = self.host else { return }
             _ = host.invokeMethod("learn", withArguments: [latin, persian])
-            self.saveWork?.cancel()
-            let work = DispatchWorkItem { [weak self] in self?.saveLearnedNow() }
-            self.saveWork = work
-            self.queue.asyncAfter(deadline: .now() + 2, execute: work)
+            // Keyboard extensions can be torn down as soon as the keyboard
+            // closes. A delayed write loses the choice before the next launch,
+            // so persist the small learned-data payload before returning.
+            self.saveLearnedNow()
         }
     }
 
@@ -106,6 +107,13 @@ final class EngineHost: EngineProviding {
 
     private func finishLoading() {
         lock.lock(); loading = false; lock.unlock()
+    }
+
+    private func syncLearnedIfNeeded(_ host: JSValue) {
+        let generation = SharedStore.learnedGeneration
+        guard generation != learnedGeneration else { return }
+        _ = host.invokeMethod("importUserData", withArguments: [SharedStore.loadLearned()])
+        learnedGeneration = generation
     }
 
     private func saveLearnedNow() {

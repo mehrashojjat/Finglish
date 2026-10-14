@@ -54,6 +54,7 @@ each letter *emits* a Latin chunk, and between letters the typist may type an un
 * **Vowel-style detector** (`vowelStyleFactor`): if the user typed *no* vowels (`slm`, `ktb`), omitted vowel letters are cheap (×0.2); with sparse vowels ×0.55; otherwise
   dropping a long-vowel letter is expensive. This is why `bad` → بد while the vowel-less `bd` ranks بود, بعد, بده and still reaches باید.
 * **`ay` rule**: a typed `a` that is not the alef, directly before a glide `y`, is penalised (+1.9): `chay` → چای, not چی.
+* **Phonetic tolerance**: the engine keeps a bounded alternate where a short vowel is written before the neighbouring consonant pair (`shork` can still reach `شوکر` through `shokr`) and penalizes a leading vowel-like letter that the typed consonant sequence skips (`jale` ranks ژاله/جاله ahead of عجله). These are general alignment rules, not word aliases.
 * **Pronunciation hints** (§6): bonus/penalty when a typed vowel matches/contradicts the real pronunciation.
 
 Why a DP and not rules? Because the same typed string is explained by many alignments; the DP finds the cheapest one *per word*, and the prior (§5) arbitrates *between words*.
@@ -86,7 +87,7 @@ Words without hints are unaffected, and where Wiktionary lists several readings 
 * **Previous-word context** (`setBigrams`): `P(w | prev)` interpolated with the unigram, weight `n/(n+30)` capped at 0.6, from 245k subtitle bigram pairs. An unseen successor loses ≤ 0.9 nats.
   Effect on chat sentences: 95.2% → 96.1% top-1, no regressions; stronger weights *hurt* (ctxWeight 2 → 93.9%).
 * **Aliases** (`data/aliases.tsv`): exact Latin keys for things no phonetic model can know — `whatsapp`, `tv`, `taxi`, `deadline`. They rank first. The engine API can also take the user's own (`setUserAliases`, they outrank built-in ones), but no app exposes it: a “My shortcuts” box existed in both apps and was removed on 2026-10-11 (it silently ignored entries separated by a single space, and its example text rendered with one space, so entries copied from it never matched).
-* **Learning** (`learn()`): each committed choice gets an immediate `4 + 1.5·ln(count)` ranking bonus for that (input, word) pair, so one deliberate choice is visible on the next query; it is exportable/importable (the app keeps it in `localStorage`).
+* **Learning** (`learn()`): each committed choice gets an immediate exact-input bonus, so one deliberate choice is visible first on the next query even when the choice was the generated letter-by-letter row; the same Persian result also gets a `4 + 1.5·ln(count)` cross-spelling bonus. The exact input/result pairs remain exportable/importable (the app keeps them in `localStorage`).
 * **ZWNJ policy**: `zwnj: 'off'` (default) strips U+200C; `'auto'` uses the orthographic half-space form where the corpus shows one (می‌خواهم). **Fixed 2026-10-11 (a user typing with the setting on saw «به‌ت», «ا‌ز», «د‌ر»):** the corpus half-space forms were ~77 % junk (a stray half-space inside ordinary words), so a form is now shown only when it is one of the regular patterns — the verb prefix می‌/نمی‌, the plural ‌ها/‌های…, the comparative ‌تر/‌ترین, or a clitic after a final ه (خانه‌ام, خانه‌ای) — with a short exception list (میخ, میهن, میان…, تنها, بهتر, بیشتر, کمتر…) and the same rule applied to forms the engine builds itself (`genuineHalfSpace` in `lexicon.js`; 3,135 of 13,839 forms stay). Not covered: compounds (برنامه‌نویسی, همین‌طور). Tests: `tests/engine.test.js` (includes a property check over every benchmark input) and `mac/Tests/main.swift` (real engine in JavaScriptCore). In the apps it is one checkbox (stored as `off`/`auto`).
 
 ## 7b. Letters and letter-by-letter spelling (`letters.js`, option `letters`, default on)
@@ -113,6 +114,7 @@ What works instead: type the long vowel doubled (`baahat` → باهات first),
 | `lazyOmit` `sparseOmit` | 0.2 / 0.55 | vowel-style detector |
 | `hintScale` | 1.0 | strength of pronunciation hints |
 | `ctxWeight` `ctxK` | 1.0 / 30 | context strength / smoothing |
+| `phoneticVariantCost` `leadingWeakOmit` | 0.5 / 2.0 | bounded vowel-placement tolerance / leading skipped vowel-like letter penalty |
 
 Initial values are linguistic priors; `tools/tune.js` (coordinate descent, train/dev split, 80/20) moved them once. **A second tuning round was rejected**: it improved its own training
 split (obj 0.9662 → 0.9702) but *lowered* the dev split (0.9826 → 0.9761) and the independent held-out set (MRR 0.948 → 0.938) — classic over-fitting, driven by shrinking λ. The values above are the

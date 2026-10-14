@@ -516,7 +516,8 @@ defs["engine"] = function (module, exports, require) {
  */
 const { Lexicon, genuineHalfSpace } = require('./lexicon');
 const { createChannel } = require('./channel');
-const { inputVariants } = require('./skeleton');
+const { letterClass } = require('./alphabet');
+const { inputVariants, phoneticVariants } = require('./skeleton');
 const { normalizeLatin, normalizePersian, stripZwnj } = require('./normalize');
 const { CharLM } = require('./charlm');
 const { createOOV } = require('./oov');
@@ -539,6 +540,8 @@ const DEFAULTS = {
   morphRho: 0.1,        // prior mass of the morphological generator (vs the char-LM's rho)
   letters: true,        // a lone key (s, h, sh…) lists the letter itself first; every input ends with its letter-by-letter spelling (letters.js)
   literalFallback: false, // small hosts may reserve one visible row for the exact Persian letter-by-letter spelling
+  phoneticVariantCost: 0.5, // bounded tolerance for a short vowel placed before the neighbouring consonant pair
+  leadingWeakOmit: 2.0, // penalize a leading vowel-like letter that the typed consonant sequence skips
 };
 
 const lse = (a, b) => (a > b ? a + Math.log1p(Math.exp(b - a)) : b + Math.log1p(Math.exp(a - b)));
@@ -557,6 +560,7 @@ class Engine {
     this.lnRho = Math.log(this.opt.rho);
     this.lnNotRho = Math.log(1 - this.opt.rho);
     this.user = new Map();      // personalisation: "latin|persian" -> count
+    this.userText = new Map();  // aggregate preference for a Persian result across Finglish spellings
     this.aliases = new Map();   // built-in exact shortcuts   latin -> [persian, ...]
     this.userAliases = new Map();   // the user's own shortcuts (win over built-in)
     this.bi = null;             // bigram model: prev word -> { n, next: Map(word -> count) }
@@ -719,13 +723,81 @@ class Engine {
       if (this.opt.morph) c = c.concat(this._morphCandidates(x, known));
       if (this.opt.oov) c = c.concat(this._oovCandidates(x, known));
     }
+    // Explicit doubled vowels and repeated consonants are deliberate spelling
+    // evidence, not noise. Keep the exact Persian letter-by-letter form in
+    // the ranked pool so every host can choose it consistently, even when a
+    // language-model candidate is more common.
+    const literal = literalSpelling(x);
+    // Do not treat the h in shh/khh as a repeated consonant: the first h is
+    // part of a digraph and the exact letter fallback would lose ح/ه choice.
+    const repeatedConsonant = /([bcdfgjklmnpqrstvwxyz])\1/.test(x);
+    const shortConsonantOnly = x.length === 2 && !/[aeiou]/.test(x);
+    const shortVowelOnly = x.length <= 3 && (x.match(/[aeiou]/g) || []).length === 1;
+    const explicitForms = [];
+    if (/(?:aa|ee|oo)/.test(x) || repeatedConsonant || shortConsonantOnly) explicitForms.push({ text: literal, force: repeatedConsonant || shortConsonantOnly });
+    if (shortVowelOnly) explicitForms.push({ text: literalSpelling(x.replace(/[aeiou]/g, '')), force: true });
+    for (const form of explicitForms) {
+      if (!form.text) continue;
+      const cost = this.channel.cost(form.text, x);
+      const exact = c.find(e => e.text === form.text);
+      const otherCosts = c.filter(e => e.text !== form.text && e.cost !== Infinity).map(e => e.cost);
+      const bestOtherCost = otherCosts.length ? Math.min(...otherCosts) : Infinity;
+      // Only override language frequency when the explicit spelling is
+      // materially better aligned. This keeps normal forms such as
+      // nemidoonam → نمیدونم, while respecting shookr → شوکر, kar → کر,
+      // and mmd → ممد.
+      if (cost !== Infinity && (form.force || bestOtherCost - cost >= 0.6)) {
+        if (exact) exact.score += 3.0;
+        else c.push({ id: -1, text: form.text, cost, logp: -cost, score: -cost, kind: 'literal' });
+      }
+    }
+    // Finglish vowel placement is not consistent: a short vowel is often
+    // written before the consonant it is heard with ("shork" for "shokr").
+    // Retrieve that bounded phonetic spelling too, while retaining the
+    // original spelling as the primary score and charging a small tolerance
+    // cost. This keeps the behavior general without adding word aliases.
+    for (const variant of phoneticVariants(x).slice(1)) {
+      const alternate = this._lexCandidates(variant.text, new Set(), prevInfo);
+      for (const e of alternate) {
+        e.cost += this.opt.phoneticVariantCost * variant.penalty / 0.5;
+        e.score -= this.opt.phoneticVariantCost * variant.penalty / 0.5;
+        e.phoneticVariant = variant.text;
+        c.push(e);
+      }
+    }
+    // An exact choice for this spelling is stronger than the cross-spelling
+    // preference below. It may have been the generated letter-by-letter row
+    // (for example shikr -> شیکر or jale -> جاله), so it is not necessarily in
+    // the normal lexicon candidate pool anymore. Reinsert it and make one
+    // deliberate tap win on the very next query.
+    if (this.user.size) for (const [key, count] of this.user) {
+      const split = String(key).indexOf('|');
+      if (split < 0 || String(key).slice(0, split) !== x) continue;
+      const text = String(key).slice(split + 1);
+      const cost = this.channel.cost(text, x);
+      if (cost === Infinity) continue;
+      const exact = c.find(e => stripZwnj(e.text) === text);
+      const bonus = 20.0 + 1.5 * Math.log1p(Math.max(0, (+count || 1) - 1));
+      if (exact) exact.score += bonus;
+      else c.push({ id: -1, text, cost, logp: -cost, score: -cost + bonus, kind: 'learned' });
+    }
     if (this.user.size) for (const e of c) {
-      const u = this.user.get(x + '|' + stripZwnj(e.text));
+      const u = this.userText.get(stripZwnj(e.text)) || 0;
       // A deliberate candidate tap should be meaningful immediately. The old
       // 1.5*ln(1+count) bonus needed several repetitions before common
       // alternatives could overtake the default, which made learning look
       // broken on small hosts that show only three rows.
       if (u) e.score += 4.0 + 1.5 * Math.log1p(u - 1);
+    }
+    // Persian can omit internal short vowels, but a word beginning with an
+    // untyped vowel-like letter is a different phonetic onset. Keep that
+    // common-language prior from beating a close spelling such as
+    // jale -> ژاله/جاله with a frequent word such as عجله. This is based on
+    // the input's first sound, not on a word-specific alias.
+    const startsWithTypedVowel = /^[aeiouy]/.test(x);
+    const hasExplicitVowel = /[aeiouy]/.test(x);
+    if (!startsWithTypedVowel && hasExplicitVowel) for (const e of c) {
+      if (e.text && letterClass(e.text[0]) !== 'C') e.score -= this.opt.leadingWeakOmit;
     }
     // exact shortcuts always rank first: the user's own, then the built-in ones
     const al = [];
@@ -781,11 +853,35 @@ class Engine {
 
   /** Personalisation: remember that `latin` was resolved to `persian` by the user. */
   learn(latin, persian) {
-    const k = normalizeLatin(latin) + '|' + stripZwnj(persian);
+    const text = stripZwnj(normalizePersian(persian));
+    const input = normalizeLatin(latin);
+    const prefix = input + '|';
+    const k = prefix + text;
+    // A new deliberate choice for the same spelling replaces the old exact
+    // choice. Otherwise jale -> جاله learned yesterday can keep competing
+    // forever after the user explicitly switches to ژاله today.
+    for (const [oldKey, oldCount] of this.user) {
+      if (!oldKey.startsWith(prefix) || oldKey === k) continue;
+      const oldText = oldKey.slice(prefix.length);
+      const remaining = (this.userText.get(oldText) || 0) - (+oldCount || 0);
+      if (remaining > 0) this.userText.set(oldText, remaining);
+      else this.userText.delete(oldText);
+      this.user.delete(oldKey);
+    }
     this.user.set(k, (this.user.get(k) || 0) + 1);
+    this.userText.set(text, (this.userText.get(text) || 0) + 1);
   }
   exportUserData() { return Array.from(this.user.entries()); }
-  importUserData(entries) { this.user = new Map(entries); }
+  importUserData(entries) {
+    this.user = new Map(Array.isArray(entries) ? entries : []);
+    this.userText = new Map();
+    for (const [key, count] of this.user) {
+      const split = String(key).indexOf('|');
+      if (split < 0) continue;
+      const text = String(key).slice(split + 1);
+      this.userText.set(text, (this.userText.get(text) || 0) + (+count || 0));
+    }
+  }
 }
 
 module.exports = { Engine, DEFAULTS };
@@ -1253,7 +1349,39 @@ function inputVariants(x, maxVariants) {
   return Array.from(out);
 }
 
-module.exports = { inputVariants, SINGLE, DIGRAPH, VOWELISH };
+/**
+ * Small, bounded phonetic tolerance for the common Finglish habit of moving
+ * a short vowel around two neighbouring consonants ("shork" for "shokr").
+ * This is a retrieval/scoring variant, not a spelling alias: the caller keeps
+ * the original input as the primary form and pays the returned penalty for
+ * using a tolerant form.
+ */
+function phoneticVariants(x) {
+  const units = [];
+  for (let i = 0; i < x.length;) {
+    const d = x.slice(i, i + 2);
+    if (DIGRAPH[d]) { units.push(d); i += 2; continue; }
+    if (VOWELISH.has(x[i])) {
+      let j = i + 1;
+      while (j < x.length && VOWELISH.has(x[j])) j++;
+      units.push(x.slice(i, j));
+      i = j;
+      continue;
+    }
+    units.push(x[i++]);
+  }
+  const out = [{ text: x, penalty: 0 }];
+  for (let i = 0; i + 2 < units.length; i++) {
+    if (!VOWELISH.has(units[i][0]) || VOWELISH.has(units[i + 1][0]) || VOWELISH.has(units[i + 2][0])) continue;
+    const swapped = units.slice();
+    [swapped[i + 1], swapped[i + 2]] = [swapped[i + 2], swapped[i + 1]];
+    const text = swapped.join('');
+    if (text !== x) out.push({ text, penalty: 0.5 });
+  }
+  return out;
+}
+
+module.exports = { inputVariants, phoneticVariants, SINGLE, DIGRAPH, VOWELISH };
 
 };
 root.FarsiIME = req("index");

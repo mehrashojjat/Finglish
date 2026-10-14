@@ -55,4 +55,36 @@ function inputVariants(x, maxVariants) {
   return Array.from(out);
 }
 
-module.exports = { inputVariants, SINGLE, DIGRAPH, VOWELISH };
+/**
+ * Small, bounded phonetic tolerance for the common Finglish habit of moving
+ * a short vowel around two neighbouring consonants ("shork" for "shokr").
+ * This is a retrieval/scoring variant, not a spelling alias: the caller keeps
+ * the original input as the primary form and pays the returned penalty for
+ * using a tolerant form.
+ */
+function phoneticVariants(x) {
+  const units = [];
+  for (let i = 0; i < x.length;) {
+    const d = x.slice(i, i + 2);
+    if (DIGRAPH[d]) { units.push(d); i += 2; continue; }
+    if (VOWELISH.has(x[i])) {
+      let j = i + 1;
+      while (j < x.length && VOWELISH.has(x[j])) j++;
+      units.push(x.slice(i, j));
+      i = j;
+      continue;
+    }
+    units.push(x[i++]);
+  }
+  const out = [{ text: x, penalty: 0 }];
+  for (let i = 0; i + 2 < units.length; i++) {
+    if (!VOWELISH.has(units[i][0]) || VOWELISH.has(units[i + 1][0]) || VOWELISH.has(units[i + 2][0])) continue;
+    const swapped = units.slice();
+    [swapped[i + 1], swapped[i + 2]] = [swapped[i + 2], swapped[i + 1]];
+    const text = swapped.join('');
+    if (text !== x) out.push({ text, penalty: 0.5 });
+  }
+  return out;
+}
+
+module.exports = { inputVariants, phoneticVariants, SINGLE, DIGRAPH, VOWELISH };

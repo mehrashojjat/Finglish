@@ -16,6 +16,11 @@ final class KeyboardViewController: KeyboardInputViewController, SessionClient {
         // advertises Persian as its primary language.
         useEnglishKeyboardLocale()
 
+        // The plist requests open access so this can be tested explicitly.
+        // The engine remains offline; full access only changes which local
+        // store can persist learned choices.
+        SharedStore.setKeyboardFullAccess(hasFullAccess)
+
         session = Session(settings: SharedStore.loadSettings(), engine: EngineHost.shared)
         session.client = self
         services.actionHandler = FinglishActionHandler(controller: self)

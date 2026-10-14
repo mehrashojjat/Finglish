@@ -46,13 +46,31 @@ enum SharedStore {
     static let appGroup = "group.com.finglish.ios"
     static let settingsKey = "finglish.settings"
     static let learnedKey = "finglish.learned"
+    static let learnedGenerationKey = "finglish.learned.generation"
+    private static let localLearnedGenerationKey = "finglish.learned.generation.seen"
 
-    private static var defaults: UserDefaults {
+    private static var groupDefaults: UserDefaults {
         UserDefaults(suiteName: appGroup) ?? .standard
     }
 
+    private static var localDefaults: UserDefaults { .standard }
+
+    private static var keyboardHasFullAccess = false
+
+    /// A keyboard without Full Access can read the shared container but cannot
+    /// reliably write to it. Keep learned choices in the extension's own
+    /// sandbox and use the shared generation only as an app-to-keyboard reset
+    /// signal. The containing app continues to store settings in the group.
+    private static var isKeyboardExtension: Bool {
+        Bundle.main.bundleURL.pathExtension == "appex"
+    }
+
+    static func setKeyboardFullAccess(_ enabled: Bool) {
+        keyboardHasFullAccess = enabled
+    }
+
     static func loadSettings() -> Settings {
-        guard let data = defaults.data(forKey: settingsKey), let settings = try? JSONDecoder().decode(Settings.self, from: data) else {
+        guard let data = groupDefaults.data(forKey: settingsKey), let settings = try? JSONDecoder().decode(Settings.self, from: data) else {
             return Settings()
         }
         return settings
@@ -60,22 +78,39 @@ enum SharedStore {
 
     static func saveSettings(_ settings: Settings) {
         guard let data = try? JSONEncoder().encode(settings) else { return }
-        defaults.set(data, forKey: settingsKey)
-        defaults.synchronize()
+        groupDefaults.set(data, forKey: settingsKey)
+        groupDefaults.synchronize()
     }
 
     static func loadLearned() -> String {
-        defaults.string(forKey: learnedKey) ?? ""
+        if isKeyboardExtension && !keyboardHasFullAccess {
+            let generation = groupDefaults.integer(forKey: learnedGenerationKey)
+            if localDefaults.integer(forKey: localLearnedGenerationKey) != generation {
+                localDefaults.removeObject(forKey: learnedKey)
+                localDefaults.set(generation, forKey: localLearnedGenerationKey)
+                localDefaults.synchronize()
+            }
+            return localDefaults.string(forKey: learnedKey) ?? ""
+        }
+        return groupDefaults.string(forKey: learnedKey) ?? ""
     }
 
     static func saveLearned(_ text: String) {
-        defaults.set(text, forKey: learnedKey)
-        defaults.synchronize()
+        let store = isKeyboardExtension && !keyboardHasFullAccess ? localDefaults : groupDefaults
+        store.set(text, forKey: learnedKey)
+        store.synchronize()
     }
 
     static func forgetLearned() {
-        defaults.removeObject(forKey: learnedKey)
-        defaults.synchronize()
+        groupDefaults.removeObject(forKey: learnedKey)
+        groupDefaults.set(groupDefaults.integer(forKey: learnedGenerationKey) + 1, forKey: learnedGenerationKey)
+        groupDefaults.synchronize()
+        localDefaults.removeObject(forKey: learnedKey)
+        localDefaults.synchronize()
+    }
+
+    static var learnedGeneration: Int {
+        groupDefaults.integer(forKey: learnedGenerationKey)
     }
 
 }

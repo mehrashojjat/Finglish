@@ -22,6 +22,8 @@
 		<dict>
 			<key>IsASCIICapable</key>
 			<true/>
+		<key>RequestsOpenAccess</key>
+		<true/>
 			<key>PrefersRightToLeft</key>
 			<false/>
 			<key>PrimaryLanguage</key>

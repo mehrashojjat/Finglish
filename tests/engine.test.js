@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { Engine } = require('../engine/src/engine');
 const { createChannel } = require('../engine/src/channel');
-const { inputVariants } = require('../engine/src/skeleton');
+const { inputVariants, phoneticVariants } = require('../engine/src/skeleton');
 const { normalizeLatin } = require('../engine/src/normalize');
 const { CharLM } = require('../engine/src/charlm');
 
@@ -30,6 +30,11 @@ test('skeleton variants: digraphs, optional h, tanvin, x=ks', () => {
   assert.ok(inputVariants('lotfan').includes('LTF'), 'tanvin: final n is not a letter');
   assert.ok(inputVariants('taxi').includes('TKS'));
   assert.ok(inputVariants('mehraban').includes('MRBN'));
+});
+
+test('phonetic variants allow a short vowel to move around a consonant pair', () => {
+  assert.ok(phoneticVariants('shork').some(v => v.text === 'shokr'));
+  assert.deepStrictEqual(phoneticVariants('salam'), [{ text: 'salam', penalty: 0 }]);
 });
 
 test('channel: finite for natural spellings, infinite for impossible ones', () => {
@@ -99,6 +104,37 @@ test('learning: one deliberate third-row choice is promoted', () => {
   assert.strictEqual(e2.candidates('salam', { max: 5 })[0].text, target);
 });
 
+test('learning: the same Persian choice transfers across Finglish spellings', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
+  e2.learn('shork', 'شوکر');
+  assert.strictEqual(e2.candidates('shokr', { max: 5 })[0].text, 'شوکر');
+});
+
+test('learning: an exact tapped spelling wins even when it was the generated row', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'), { oov: false, morph: false, literalFallback: true });
+  e2.learn('shikr', 'شیکر');
+  e2.learn('jale', 'جاله');
+  assert.strictEqual(e2.candidates('shikr', { max: 3 })[0].text, 'شیکر');
+  assert.strictEqual(e2.candidates('jale', { max: 3 })[0].text, 'جاله');
+  e2.learn('jale', 'ژاله');
+  assert.strictEqual(e2.candidates('jale', { max: 3 })[0].text, 'ژاله');
+});
+
+test('explicit doubled vowels and repeated consonants preserve exact spelling', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
+  assert.strictEqual(e2.candidates('shookr', { max: 5 })[0].text, 'شوکر');
+  assert.strictEqual(e2.candidates('shooshmmd', { max: 5 })[0].text, 'شوشممد');
+  assert.strictEqual(e2.candidates('mmd', { max: 5 })[0].text, 'ممد');
+  assert.strictEqual(e2.candidates('kr', { max: 5 })[0].text, 'کر');
+  assert.strictEqual(e2.candidates('kar', { max: 5 })[0].text, 'کر');
+});
+
+test('phonetic ranking keeps an omitted leading vowel from beating a close spelling', () => {
+  const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'));
+  assert.ok(['ژاله', 'جاله'].includes(e2.candidates('jale', { max: 3 })[0].text));
+  assert.ok(e2.candidates('shork', { max: 3 }).some(c => c.text === 'شوکر' || c.text === 'شکر'));
+});
+
 test('small-host literal fallback keeps an unknown spelling visible', () => {
   const e2 = Engine.fromTSV(fs.readFileSync(path.join(ROOT, 'data/build/lexicon.tsv'), 'utf8'), { oov: false, morph: false, literalFallback: true });
   const rows = e2.candidates('qwerty', { max: 3 });
@@ -162,10 +198,10 @@ test('a lone key lists its own letter first, then the words (s → س, not اس;
   assert.strictEqual(top('S'), 'س', 'capitals are the same key');
 });
 
-test('letter-by-letter spelling: the last row, for words that are in no list', () => {
+test('letter-by-letter spelling: exact repeated spellings are promoted when explicit', () => {
   const l = eng.candidates('mmd', { max: 18 });
-  assert.strictEqual(l[l.length - 1].text, 'ممد'); assert.strictEqual(l[l.length - 1].kind, 'literal');
-  assert.notStrictEqual(l[0].text, 'ممد', 'never first: the words keep their ranking');
+  assert.strictEqual(l[0].text, 'ممد');
+  assert.ok(l.some(c => c.text === 'ممد'));
   assert.ok(list('mhrs').includes('مهرس'), 'present once, wherever it ranks');
   assert.ok(list('mehr', 18).includes('مهر') && list('bache', 18).includes('باچه'), 'short e is not written, a final e is ه');
   assert.ok(list('khoobi', 18).includes('خوبی') && list('kheili', 18).includes('خیلی'));
