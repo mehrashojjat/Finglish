@@ -12,6 +12,7 @@
 		110000000000000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000017 /* PrivacyInfo.xcprivacy */; };
 		110000000000000000000004 /* IOSSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000003 /* IOSSettings.swift */; };
 		110000000000000000000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000018 /* Assets.xcassets */; };
+		110000000000000000000007 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 400000000000000000000009 /* InfoPlist.strings */; };
 		120000000000000000000001 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000006 /* KeyboardView.swift */; };
 		120000000000000000000002 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000007 /* KeyboardViewController.swift */; };
 		120000000000000000000003 /* IOSSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000003 /* IOSSettings.swift */; };
@@ -20,6 +21,7 @@
 		120000000000000000000006 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000017 /* PrivacyInfo.xcprivacy */; };
 		120000000000000000000007 /* farsi-ime-engine.js in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000010 /* farsi-ime-engine.js */; };
 		120000000000000000000008 /* lexicon.tsv in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000011 /* lexicon.tsv */; };
+		120000000000000000000009 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 400000000000000000000009 /* InfoPlist.strings */; };
 		120000000000000000000010 /* aliases.tsv in Resources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000013 /* aliases.tsv */; };
 		120000000000000000000011 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 200000000000000000000014 /* JavaScriptCore.framework */; };
 		120000000000000000000012 /* FinglishKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* FinglishKeyboard.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -71,7 +73,9 @@
 		200000000000000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		200000000000000000000019 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		200000000000000000000020 /* Signing.local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.local.xcconfig.example; sourceTree = "<group>"; };
-		300000000000000000000001 /* Finglish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finglish.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		200000000000000000000021 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		200000000000000000000022 /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		300000000000000000000001 /* Finglish فینگلیش.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finglish فینگلیش.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000002 /* FinglishKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FinglishKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -162,6 +166,7 @@
 				200000000000000000000016 /* FinglishKeyboard.entitlements */,
 				200000000000000000000017 /* PrivacyInfo.xcprivacy */,
 				200000000000000000000018 /* Assets.xcassets */,
+				400000000000000000000009 /* InfoPlist.strings */,
 				400000000000000000000008 /* Engine */,
 			);
 			path = Resources;
@@ -170,7 +175,7 @@
 		400000000000000000000007 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				300000000000000000000001 /* Finglish.app */,
+				300000000000000000000001 /* Finglish فینگلیش.app */,
 				300000000000000000000002 /* FinglishKeyboard.appex */,
 			);
 			name = Products;
@@ -206,7 +211,7 @@
 			);
 			name = Finglish;
 			productName = Finglish;
-			productReference = 300000000000000000000001 /* Finglish.app */;
+			productReference = 300000000000000000000001 /* Finglish فینگلیش.app */;
 			productType = "com.apple.product-type.application";
 		};
 		500000000000000000000002 /* FinglishKeyboard */ = {
@@ -254,6 +259,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				fa,
 				Base,
 			);
 			mainGroup = 400000000000000000000001;
@@ -277,6 +283,7 @@
 			files = (
 				110000000000000000000003 /* PrivacyInfo.xcprivacy in Resources */,
 				110000000000000000000005 /* Assets.xcassets in Resources */,
+				110000000000000000000007 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +295,7 @@
 				120000000000000000000007 /* farsi-ime-engine.js in Resources */,
 				120000000000000000000008 /* lexicon.tsv in Resources */,
 				120000000000000000000010 /* aliases.tsv in Resources */,
+				120000000000000000000009 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +334,19 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		400000000000000000000009 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				200000000000000000000021 /* en */,
+				200000000000000000000022 /* fa */,
+			);
+			name = InfoPlist.strings;
+			path = .;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		800000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -357,19 +378,19 @@
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/Finglish.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Finglish/Resources/AppInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Finglish;
+				INFOPLIST_KEY_CFBundleDisplayName = "فینگلیش";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish;
-				PRODUCT_NAME = Finglish;
+				PRODUCT_NAME = "Finglish فینگلیش";
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -385,19 +406,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/Finglish.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Finglish/Resources/AppInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Finglish;
+				INFOPLIST_KEY_CFBundleDisplayName = "فینگلیش";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish;
-				PRODUCT_NAME = Finglish;
+				PRODUCT_NAME = "Finglish فینگلیش";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -412,7 +433,7 @@
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/FinglishKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Finglish/Resources/KeyboardInfo.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -420,7 +441,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish.keyboard;
 				PRODUCT_NAME = FinglishKeyboard;
 				SDKROOT = iphoneos;
@@ -438,7 +459,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = Finglish/Resources/FinglishKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Finglish/Resources/KeyboardInfo.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -446,7 +467,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mehrashojjat.finglish.keyboard;
 				PRODUCT_NAME = FinglishKeyboard;
 				SDKROOT = iphoneos;

@@ -1,0 +1,3 @@
+/* The device shows one localized name, never both names together. */
+CFBundleDisplayName = "Finglish";
+CFBundleName = "Finglish";

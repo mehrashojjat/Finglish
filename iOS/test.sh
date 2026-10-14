@@ -20,6 +20,8 @@ xcrun swiftc -swift-version 5 -O -module-cache-path "$build/ModuleCache" \
 for plist in \
   "$root/iOS/Finglish/Resources/AppInfo.plist" \
   "$root/iOS/Finglish/Resources/KeyboardInfo.plist" \
+  "$root/iOS/Finglish/Resources/en.lproj/InfoPlist.strings" \
+  "$root/iOS/Finglish/Resources/fa.lproj/InfoPlist.strings" \
   "$root/iOS/Finglish/Resources/Finglish.entitlements" \
   "$root/iOS/Finglish/Resources/FinglishKeyboard.entitlements" \
   "$root/iOS/Finglish/Resources/PrivacyInfo.xcprivacy"; do

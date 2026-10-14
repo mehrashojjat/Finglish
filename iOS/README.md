@@ -27,8 +27,7 @@ The extension therefore delegates all key geometry, sizing, number/symbol pages,
 1. Open `Finglish.xcodeproj` in Xcode 26 or newer. Sign in to Xcode with the Apple Developer account that owns the app identifiers, if needed.
 2. The app target uses bundle identifier `com.mehrashojjat.finglish` and the keyboard extension uses `com.mehrashojjat.finglish.keyboard`. They load the Team ID from the ignored `Signing.local.xcconfig`; you should not need to choose a team in the project or save one into `project.pbxproj`. Keep the existing App Groups capability `group.com.finglish.ios` enabled on both targets; it is intentionally separate from the bundle identifiers so shared settings and engine data remain available.
 3. Select your connected iPhone as the run destination and run the `Finglish` scheme.
-4. In the app, tap **باز کردن تنظیمات صفحه‌کلید** to open Finglish’s own Settings page.
-5. To add or remove the keyboard itself, iOS requires **Settings → General → Keyboard → Keyboards → Add New Keyboard → Finglish**. Apple does not provide an App Store-safe API for changing that list from inside the app. This build requests **Allow Full Access** again so its persistence behavior can be tested; Finglish still contains no network feature and performs conversion offline.
+4. In the app, tap **باز کردن تنظیمات صفحه‌کلید** to open Finglish’s app-specific Settings page. Turn on **Finglish** and **Allow Full Access** there. Full Access lets learned choices sync through the shared local container; Finglish has no network feature and never sends typed text online.
 6. Return to the app. The test field is available immediately; hold the globe key and choose Finglish. Type Latin letters such as `salam`, tap a suggestion, or press Space to accept the highlighted suggestion.
 
 Xcode resolves KeyboardKit through Swift Package Manager. The project pins the exact MIT release commit, so Xcode may ask to download the package the first time it builds.

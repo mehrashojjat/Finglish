@@ -36,9 +36,13 @@ struct ContentView: View {
                         openSettings()
                     }
 
-                    Text("برای افزودن یا حذف Finglish: Settings → General → Keyboard → Keyboards. Finglish کاملاً آفلاین است و از اینترنت یا دادهٔ تلفن همراه استفاده نمی‌کند.")
+                    Text("در تنظیمات بازشده، Finglish را روشن کنید و «دسترسی کامل» را هم فعال کنید.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+
+                    Text("★ دسترسی کامل برای همگام‌سازی انتخاب‌های یادگرفته‌شده بین برنامه و صفحه‌کلید است؛ متن شما به اینترنت فرستاده نمی‌شود.")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
                 } header: {
                     Text("وضعیت")
                 }
@@ -48,7 +52,7 @@ struct ContentView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
 
-                    Text("اگر Finglish در فهرست صفحه‌کلیدها اضافه شده، با دکمهٔ کره آن را انتخاب کنید. اگر اضافه نشده، از دکمهٔ تنظیمات بالا استفاده کنید.")
+                    Text("بعد از فعال‌کردن Finglish، با دکمهٔ کره آن را انتخاب کنید.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
 
@@ -118,6 +122,9 @@ struct ContentView: View {
                         }
                     }
                     Text("پشتیبانی: iOS 26 و جدیدتر")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Text("توسعه‌دهنده: مهراس حجت")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
